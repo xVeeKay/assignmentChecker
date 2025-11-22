@@ -4,6 +4,7 @@ const {createDepartment,viewDepartments,updateDepartment,deleteDepartment,create
 const {authAdmin}=require('../middlewares/admin/authAdmin.middleware.js')
 const {Department}=require('../models/schemas/department.model.js')
 const {User}=require('../models/schemas/user.model.js')
+const upload=require('../middlewares/admin/upload.middleware.js')
 
 
 //main pages
@@ -34,7 +35,7 @@ router.route('/departments/:id/delete').delete(authAdmin,deleteDepartment)
 router.route('/users/create').get(authAdmin,async(req,res)=>{
     const departments=await Department.find()
     res.render('admin/createUser',{departments})
-}).post(authAdmin,createUser)
+}).post(authAdmin,upload.single("avatar"),createUser)
 router.route('/users').get(authAdmin,viewUsers)
 router.route('/users/:id/edit').get(authAdmin,async(req,res)=>{
     const id=req.params.id

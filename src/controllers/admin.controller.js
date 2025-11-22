@@ -5,6 +5,8 @@ const {Department}=require('../models/schemas/department.model.js')
 const {User}=require('../models/schemas/user.model.js')
 const {sendWelcomeEmail}=require('../utils/admin/sendEmail.js')
 const {Assignment}=require('../models/schemas/assignment.model.js')
+const { uploadToCloudinary } = require('../utils/cloudinary.js')
+
 
 const adminEmail='admin@a.com'
 const pass='123'
@@ -133,7 +135,12 @@ const createUser=async(req,res)=>{
     }
     const plainPassword=password|| crypto.randomBytes(4).toString('hex')
     const hashedPassword=await bcrypt.hash(plainPassword,10)
-    const user = new User({ name, email, hashedPassword, phone, department, role });
+    var avatar="https://avatar.iran.liara.run/public/19"
+    if(req.file&&req.file.buffer){
+        const result=await uploadToCloudinary(req.file.buffer,'assignmentChecker/userAvatars')
+        avatar=result.secure_url
+    }
+    const user = new User({ name, email, hashedPassword, phone, department, role,avatar });
     await user.validate(); 
     await user.save(); 
     if(req.body.sendEmail){

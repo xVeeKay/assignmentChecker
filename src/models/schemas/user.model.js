@@ -16,10 +16,7 @@ const userSchema=new mongoose.Schema({
         },
     },
     password:String,
-    phone:{
-        type:Number,
-        unique:true
-    },
+    phone:Number,
     department:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'department'
