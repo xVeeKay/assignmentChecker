@@ -6,7 +6,7 @@ const authAdmin=(req,res,next)=>{
         return res.status(400).redirect('/')
     }
     try {
-        const decoded=jwt.verify(token,'vk')
+        const decoded=jwt.verify(token,process.env.JWT_SECRET)
         if(decoded.role!=='admin'){
             return res.status(400).redirect('/')
         }

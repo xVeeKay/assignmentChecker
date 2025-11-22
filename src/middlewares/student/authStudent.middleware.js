@@ -6,7 +6,7 @@ const authStudent=(req,res,next)=>{
             return res.status(400).redirect('/')
         }
         try {
-            const decoded=jwt.verify(token,'vk')
+            const decoded=jwt.verify(token,process.env.JWT_SECRET)
             if(decoded.role!=='student'){
                 return res.status(400).redirect('/')
             }

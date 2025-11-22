@@ -17,7 +17,7 @@ const login=async(req,res)=>{
             if(!ok){
                 return res.status(400).render('auth/login',{error:"Invalid password! 🥲"})
             }
-            const token=jwt.sign({email,role:'admin'},'vk',{expiresIn:'15m'})  
+            const token=jwt.sign({email,role:'admin'},process.env.JWT_SECRET,{expiresIn:'15m'})  
             res.cookie('token',token,{
                 httpOnly:true,
                 maxAge:15*60*1000
@@ -33,7 +33,7 @@ const login=async(req,res)=>{
         if(!ok){
             return res.render('auth/login',{error:"Invalid password!"})
         }
-        const token=jwt.sign({email,role:user.role},'vk',{expiresIn:'15m'})
+        const token=jwt.sign({email,role:user.role},process.env.JWT_SECRET,{expiresIn:'15m'})
         res.cookie('token',token,{
             httpOnly:true,
             maxAge:15*60*1000
