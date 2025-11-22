@@ -27,6 +27,7 @@ const userSchema=new mongoose.Schema({
     role:String,
     resetPasswordToken: String,
     resetPasswordExpires: Date,
+    avatar:String
 },{timestamps:true})
 
 const User=mongoose.model("User",userSchema)
