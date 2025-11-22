@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit User</title>
+    <style>
+      :root {
+        --primary: #14919b;
+        --border: #d1d5db;
+        --error: #dc2626;
+      }
+
+      * { box-sizing: border-box; }
+      body { font-family: system-ui, -apple-system, sans-serif; background:#f7f7f8; color:#111827; }
+      .container { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+
+      .top-bar { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1rem; }
+      h1 { font-size:1.5rem; margin:0; font-weight:600; }
+
+      form { background:#fff; padding:1.25rem; border-radius:8px; border:1px solid var(--border); box-shadow:0 1px 2px rgba(0,0,0,0.03); }
+      .grid { display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; }
+
+      .form-group { display:flex; flex-direction:column; }
+      label { font-size:0.85rem; color:#374151; margin-bottom:0.35rem; font-weight:600; }
+      input[type="text"], input[type="email"], input[type="tel"], input[type="password"], select {
+        padding:0.6rem 0.75rem; border:1px solid var(--border); border-radius:8px; font-size:0.95rem; background:#fff; color:#111827;
+      }
+
+      .full { grid-column: 1 / -1; }
+      .muted { font-size:0.85rem; color:#6b7280; margin-top:0.35rem; }
+
+      .actions { display:flex; gap:0.5rem; justify-content:space-between; align-items:center; margin-top:1rem; }
+      .left-actions { display:flex; gap:0.5rem; }
+
+      .btn { padding:0.55rem 0.9rem; border-radius:8px; border:none; cursor:pointer; font-weight:600; }
+      .btn-save { background:var(--primary); color:#fff; box-shadow:0 1px 2px rgba(20,145,155,0.12); }
+      .btn-back { background:#fff; border:1px solid var(--border); color:var(--primary); text-decoration:none; display:inline-flex; align-items:center; gap:0.5rem; padding:0.5rem 0.8rem; border-radius:8px; font-weight:600; }
+
+  .error { background: #fff1f2; color: #b91c1c; padding: 0.6rem 0.9rem; border-radius: 8px; margin-bottom: 1rem; }
+
+  .success { background: #ecfdf5; color: #065f46; padding: 0.6rem 0.9rem; border-radius: 8px; margin-bottom: 1rem; }
+
+      /* role read-only display */
+      .role-display { padding:0.6rem 0.75rem; border:1px solid var(--border); border-radius:8px; background:#f8fafb; color:#111827; font-weight:600; }
+
+      @media (max-width:640px){ .grid{ grid-template-columns:1fr; } .actions{ flex-direction:column; align-items:stretch; } }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="top-bar">
+        <h1>Edit User</h1>
+        <a href="/admin/users" class="btn-back">Back</a>
+      </div>
+
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="error"><%= error %></div>
+      <% } %>
+
+      <% if (typeof success !== 'undefined' && success) { %>
+        <div class="success"><%= success %></div>
+      <% } %>
+
+      <form action="/admin/users/<%= user && user._id ? user._id : '' %>/edit" method="post">
+
+        <div class="grid">
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text" required value="<%= user ? user.name : '' %>" />
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" required value="<%= user ? user.email : '' %>" />
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone</label>
+            <input id="phone" name="phone" type="tel" value="<%= user && user.phone ? user.phone : '' %>" />
+          </div>
+
+          <div class="form-group">
+            <label for="department">Department</label>
+            <select id="department" name="department">
+              <option value="">-- Select department --</option>
+              <% if (Array.isArray(departments)) { %>
+                <% departments.forEach(function(d){ %>
+                  <option value="<%= d._id %>" <%= String(user.department)===String(d._id) ? 'selected' :"" %> ><%= d.name %></option>
+                <% }) %>
+              <% } %>
+            </select>
+          </div>
+
+          <div class="form-group full">
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" placeholder="Leave blank to keep current password" />
+            <div class="muted">Only fill this field if you want to change the user's password.</div>
+          </div>
+
+          <div class="form-group">
+            <label>Role (fixed)</label>
+            <div class="role-display"><%= user ? (user.role || 'Student') : 'Student' %></div>
+          </div>
+
+        </div>
+
+        <div class="actions">
+          <div class="left-actions">
+            <a href="/admin/users" class="btn-back">Back</a>
+          </div>
+
+          <div>
+            <button type="submit" class="btn btn-save">Save changes</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>
+

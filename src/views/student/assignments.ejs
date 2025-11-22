@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>My Assignments</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica,
+          Arial, sans-serif;
+        background: var(--bg);
+        color: #0f172a;
+        margin: 0;
+        padding: 2rem;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      /* header action buttons */
+      .header-actions {
+        display: inline-flex;
+        gap: 0.5rem;
+        align-items: center;
+      }
+      .header-actions .btn {
+        padding: 0.55rem 0.85rem;
+        border-radius: 8px;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+      .header-actions .btn-primary {
+        background: var(--primary);
+        color: #fff;
+        border: none;
+      }
+      .header-actions .btn-outline {
+        background: var(--card);
+        color: var(--primary);
+        border: 1px solid var(--border);
+      }
+
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+      }
+      h1 {
+        margin: 0;
+        font-size: 1.5rem;
+      }
+
+      .controls {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        margin-bottom: 1.25rem;
+      }
+
+      .filter-group {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+      }
+
+      .filter-group label {
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+
+      select,
+      .sort-btn {
+        padding: 0.6rem 0.75rem;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        font-size: 0.95rem;
+        background: var(--card);
+        color: #0f172a;
+        cursor: pointer;
+      }
+
+      .sort-btn {
+        background: var(--button-bg);
+        border: 1px solid var(--border-color);
+        font-weight: 600;
+      }
+
+      .sort-btn:hover {
+        background: var(--button-hover);
+      }
+
+      /* Table view */
+      .table-wrapper {
+        background: var(--card);
+        border-radius: 10px;
+        border: 1px solid var(--border-color);
+        overflow: hidden;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th {
+        background: #f8fafc;
+        padding: 0.9rem;
+        text-align: left;
+        font-weight: 700;
+        color: #334155;
+        border-bottom: 1px solid var(--border-color);
+        font-size: 0.9rem;
+      }
+      td {
+        padding: 0.9rem;
+        border-bottom: 1px dashed var(--border-color);
+        font-size: 0.95rem;
+      }
+      tr:hover {
+        background: #f9fafb;
+      }
+
+      .title-link {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+      }
+      .title-link:hover {
+        text-decoration: underline;
+      }
+
+      .btn-submit {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.5rem 0.9rem;
+        background: #0d9488;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        cursor: pointer;
+        text-decoration: none;
+        box-shadow: 0 2px 4px rgba(13, 148, 136, 0.2);
+      }
+      .btn-submit:hover {
+        background: #0f766e;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(13, 148, 136, 0.3);
+      }
+
+      /* Resubmit button (for rejected items) */
+      .btn-resubmit {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.45rem 0.85rem;
+        background: #fff;
+        color: var(--rejected, #ef4444);
+        border: 1px solid var(--rejected, #ef4444);
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        cursor: pointer;
+      }
+      .btn-resubmit:hover {
+        background: var(--rejected, #ef4444);
+        color: #fff;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(239, 68, 68, 0.15);
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 0.35rem 0.7rem;
+        border-radius: 999px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #fff;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      }
+      .badge.draft {
+        background: #6b7280;
+      }
+      .badge.submitted {
+        background: #3b82f6;
+      }
+      .badge.approved {
+        background: #10b981;
+      }
+      .badge.rejected {
+        background: #ef4444;
+      }
+
+      .reviewer {
+        color: #6b7280;
+        font-size: 0.9rem;
+      }
+
+      .empty {
+        text-align: center;
+        padding: 2rem;
+        color: #6b7280;
+      }
+
+      /* Cards view (mobile) */
+      .cards-wrapper {
+        display: none;
+        gap: 1rem;
+      }
+      .card-item {
+        background: var(--card);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        padding: 1rem;
+      }
+      .card-item > div {
+        margin-bottom: 0.5rem;
+      }
+      .card-label {
+        font-size: 0.8rem;
+        color: #6b7280;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      /* Responsive */
+      @media (max-width: 900px) {
+        .table-wrapper {
+          display: none;
+        }
+        .cards-wrapper {
+          display: grid;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>My Assignments</h1>
+        <div class="header-actions">
+          <a href="/student/dashboard" class="btn btn-outline">Dashboard</a>
+          <a href="/student/assignments/upload" class="btn btn-primary"
+            >Upload New</a
+          >
+        </div>
+      </div>
+
+      <!-- Error/Success Alerts -->
+      <% if (typeof error !== 'undefined' && error) { %>
+      <div
+        style="
+          background: #fff1f2;
+          color: #b91c1c;
+          padding: 0.6rem;
+          border-radius: 8px;
+          margin-bottom: 1rem;
+        "
+      >
+        <%= error %>
+      </div>
+      <% } %> <% if (typeof success !== 'undefined' && success) { %>
+      <div
+        style="
+          background: #ecfdf5;
+          color: #065f46;
+          padding: 0.6rem;
+          border-radius: 8px;
+          margin-bottom: 1rem;
+        "
+      >
+        <%= success %>
+      </div>
+      <% } %>
+
+      <!-- Controls: Filter & Sort -->
+      <div class="controls">
+        <div class="filter-group">
+          <label for="statusFilter">Filter by Status:</label>
+          <select id="statusFilter">
+            <option value="">All Statuses</option>
+            <option value="draft">Draft</option>
+            <option value="submitted">Submitted</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+
+        <button class="sort-btn" onclick="toggleSort()">Sort by Date ⇅</button>
+      </div>
+
+      <!-- Table View -->
+      <div class="table-wrapper">
+        <% if (Array.isArray(assignments) && assignments.length) { %>
+        <table id="assignmentsTable">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Status</th>
+              <th>Creation Date</th>
+              <th>Current Reviewer</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <% assignments.forEach(function(a){ %>
+            <tr
+              data-status="<%= (a.status || 'draft').toString().toLowerCase() %>"
+              data-date="<%= a.submittedAt ? new Date(a.submittedAt).getTime() : 0 %>"
+            >
+              <td><%= a.title %></td>
+              <td><%= a.category || '-' %></td>
+              <td>
+                <% var st = (a.status || 'draft').toString().toLowerCase(); %>
+                <span class="badge <%= st %>"
+                  ><%= st.charAt(0).toUpperCase() + st.slice(1) %></span
+                >
+              </td>
+              <td>
+                <%= a.submittedAt ? new Date(a.submittedAt).toLocaleDateString()
+                : 'Not submitted' %>
+              </td>
+              <td class="reviewer">
+                <%= a.faculty&& a.faculty.name ? a.faculty.name : 'Unassigned'
+                %>
+              </td>
+              <td>
+                <a class="title-link" href="/student/assignments/<%= a._id %>"
+                  >View</a
+                >
+                <%if(a.status==='rejected'){%>
+                <a style="text-decoration: none;" class="btn-resubmit" href="/student/assignments/<%= a._id %>/resubmit">Resubmit</a>
+                <%}else{%>
+                <button
+                  class="btn-submit"
+                  onclick="submitAssignment('<%= a._id%>')"
+                >
+                  Submit for review
+                </button>
+                <%}%>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+        <% } else { %>
+        <div class="empty">
+          No assignments yet.
+          <a
+            href="/student/assignments/upload"
+            style="color: var(--primary); font-weight: 700"
+            >Upload your first one</a
+          >.
+        </div>
+        <% } %>
+      </div>
+    </div>
+
+    <script>
+      let sortAsc = false
+
+      // Filter by status
+      document
+        .getElementById('statusFilter')
+        .addEventListener('change', function (e) {
+          const filterVal = e.target.value.toLowerCase()
+
+          // Filter table rows
+          document.querySelectorAll('#tableBody tr').forEach((row) => {
+            if (!filterVal || row.dataset.status === filterVal) {
+              row.style.display = ''
+            } else {
+              row.style.display = 'none'
+            }
+          })
+
+          // Filter cards
+          document.querySelectorAll('.card-item').forEach((card) => {
+            if (!filterVal || card.dataset.status === filterVal) {
+              card.style.display = ''
+            } else {
+              card.style.display = 'none'
+            }
+          })
+        })
+
+      // Sort by date
+      function toggleSort() {
+        sortAsc = !sortAsc
+        const rows = Array.from(document.querySelectorAll('#tableBody tr'))
+        const cards = Array.from(document.querySelectorAll('.card-item'))
+
+        rows.sort((a, b) => {
+          const dateA = parseInt(a.dataset.date) || 0
+          const dateB = parseInt(b.dataset.date) || 0
+          return sortAsc ? dateA - dateB : dateB - dateA
+        })
+
+        cards.sort((a, b) => {
+          const dateA = parseInt(a.dataset.date) || 0
+          const dateB = parseInt(b.dataset.date) || 0
+          return sortAsc ? dateA - dateB : dateB - dateA
+        })
+
+        // Re-append rows
+        const tbody = document.getElementById('tableBody')
+        rows.forEach((row) => tbody.appendChild(row))
+
+        // Re-append cards
+        const cardsView = document.getElementById('cardsView')
+        cards.forEach((card) => cardsView.appendChild(card))
+      }
+
+      async function submitAssignment(id) {
+        const confirmed = confirm('Do you want to submit?')
+        if (!confirmed) return
+        try {
+          const res = await fetch(`/student/assignments/${id}/submit`, {
+            method: 'POST',
+          })
+          const data = await res.json()
+          if (!data.success) {
+            alert(data.message)
+            return
+          }
+          alert(data.message)
+          location.reload()
+        } catch (error) {
+          console.log(error)
+          alert('An error occured while submitting your assignment! 👽')
+        }
+      }
+    </script>
+  </body>
+</html>

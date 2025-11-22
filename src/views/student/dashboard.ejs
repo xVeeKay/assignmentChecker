@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Student Dashboard</title>
+    <style>
+      :root {
+        --primary: #14919b;
+        --bg: #f6f8f9;
+        --card: #ffffff;
+        --border: #e6e9eb;
+        --approved: #16a34a; /* green */
+        --rejected: #dc2626; /* red */
+        --pending: #f59e0b; /* yellow */
+        --draft: #6b7280; /* gray */
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica,
+          Arial, sans-serif;
+        background: var(--bg);
+        color: #0f172a;
+        margin: 0;
+        padding: 2rem;
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      .top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1.25rem;
+      }
+      h1 {
+        font-size: 1.6rem;
+        margin: 0;
+        color: #0f172a;
+      }
+
+      .controls {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.6rem 0.9rem;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+      }
+      .btn-primary {
+        background: var(--primary);
+        color: #fff;
+        box-shadow: 0 6px 18px rgba(20, 145, 155, 0.12);
+      }
+      .btn-outline {
+        background: var(--card);
+        border: 1px solid var(--border);
+        color: var(--primary);
+      }
+
+      /* cards grid */
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+      .card {
+        background: var(--card);
+        border-radius: 10px;
+        padding: 1rem;
+        border: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .card .label {
+        font-size: 0.85rem;
+        color: #475569;
+        margin-bottom: 0.25rem;
+      }
+      .card .value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #0f172a;
+      }
+      .card .muted {
+        font-size: 0.85rem;
+        color: #6b7280;
+        margin-top: 0.5rem;
+      }
+
+      /* recent submissions */
+      .panel {
+        background: var(--card);
+        border-radius: 10px;
+        padding: 1rem;
+        border: 1px solid var(--border);
+      }
+      .panel h2 {
+        margin: 0 0 0.75rem 0;
+        font-size: 1.05rem;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        padding: 0.75rem;
+        text-align: left;
+        border-bottom: 1px dashed var(--border);
+        font-size: 0.95rem;
+      }
+      th {
+        font-weight: 700;
+        color: #475569;
+        background: transparent;
+      }
+
+      .status {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 999px;
+        color: #fff;
+        font-weight: 700;
+        font-size: 0.8rem;
+      }
+      .status.approved {
+        background: var(--approved);
+      }
+      .status.rejected {
+        background: var(--rejected);
+      }
+      .status.submitted {
+        background: var(--pending);
+      }
+      .status.draft {
+        background: var(--draft);
+      }
+
+      .empty {
+        padding: 1rem;
+        color: #6b7280;
+      }
+
+      .panel-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1rem;
+      }
+      .link {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      @media (max-width: 900px) {
+        .cards {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (max-width: 560px) {
+        body {
+          padding: 1rem;
+        }
+        .cards {
+          grid-template-columns: 1fr;
+        }
+        .top {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        .controls {
+          width: 100%;
+          justify-content: space-between;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="top">
+        <h1>Assignment Submissions</h1>
+        <div class="controls">
+          <a class="btn btn-outline" href="/student/assignments"
+            >View all assignments</a
+          >
+          <a class="btn btn-primary" href="/student/assignments/upload"
+            >Upload New Assignment</a
+          >
+        </div>
+      </div>
+
+      <div class="cards">
+        <div class="card">
+          <div>
+            <div class="label">Draft</div>
+            <div class="value">
+              <%= typeof draftCount !== 'undefined' ? draftCount : 0 %>
+            </div>
+          </div>
+          <div class="muted">Assignments you haven't submitted yet</div>
+        </div>
+
+        <div class="card">
+          <div>
+            <div class="label">Submitted</div>
+            <div class="value">
+              <%= typeof submittedCount !== 'undefined' ? submittedCount : 0 %>
+            </div>
+          </div>
+          <div class="muted">Awaiting review</div>
+        </div>
+
+        <div class="card">
+          <div>
+            <div class="label">Approved</div>
+            <div class="value">
+              <%= typeof approvedCount !== 'undefined' ? approvedCount : 0 %>
+            </div>
+          </div>
+          <div class="muted">Successfully approved</div>
+        </div>
+
+        <div class="card">
+          <div>
+            <div class="label">Rejected</div>
+            <div class="value">
+              <%= typeof rejectedCount !== 'undefined' ? rejectedCount : 0 %>
+            </div>
+          </div>
+          <div class="muted">Needs revision</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Recent submissions</h2>
+
+        <% if (Array.isArray(recentSubmissions) && recentSubmissions.length) {
+        %>
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Course</th>
+              <th>Category</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% recentSubmissions.forEach(function(s){ %>
+            <tr>
+              <td><%= s.title %></td>
+              <td><%= s.description || '-' %></td>
+              <td>
+                <%= s.category%>
+              </td>
+              <td>
+                <% var st = (s.status||'draft').toString().toLowerCase(); %>
+                <span class="status <%= st %>"
+                  ><%= st.charAt(0).toUpperCase() + st.slice(1) %></span
+                >
+              </td>
+              <td>
+                <a class="link" href="/student/assignments/<%= s._id %>"
+                  >View</a
+                >
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+        <% } else { %>
+        <div class="empty">
+          No submissions yet. Upload your first assignment to get started.
+        </div>
+        <% } %>
+
+        <div class="panel-footer">
+          <a class="link" href="/student/assignments">See all assignments</a>
+          <a class="btn btn-primary" href="/student/assignments/upload"
+            >Upload New Assignment</a
+          >
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

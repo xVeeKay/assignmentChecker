@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Create Department</title>
+    <style>
+      :root {
+        --bg: #f5f7fb;
+        --card: #fff;
+        --accent: #3b82f6;
+        --accent-dark: #2563eb;
+        --muted: #6b7280;
+        --border: #e5e7eb;
+      }
+      
+      body {
+        margin: 0;
+        font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        background: var(--bg);
+        color: #374151;
+        line-height: 1.5;
+        padding: 24px;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .card {
+        background: var(--card);
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+        padding: 32px;
+      }
+
+      h1 {
+        margin: 0 0 24px;
+        font-size: 24px;
+        color: #111827;
+      }
+
+      .error {
+        background: #fff4f4;
+        color: #b91c1c;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border: 1px solid rgba(185, 28, 28, 0.1);
+      }
+
+      .success {
+        background: #f0fdf4;
+        color: #15803d;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border: 1px solid rgba(21, 128, 61, 0.1);
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 24px;
+        margin-bottom: 24px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: #374151;
+      }
+
+      input, select, textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 15px;
+        color: #111827;
+        background: #fff;
+        box-sizing: border-box;
+      }
+
+      textarea {
+        min-height: 100px;
+        resize: vertical;
+      }
+
+      input:focus, select:focus, textarea:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 15px;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: none;
+      }
+
+      .btn-primary {
+        background: var(--accent);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: var(--accent-dark);
+      }
+
+      .btn-secondary {
+        background: #f3f4f6;
+        color: #374151;
+      }
+
+      .btn-secondary:hover {
+        background: #e5e7eb;
+      }
+
+      .actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 32px;
+      }
+
+      @media (max-width: 640px) {
+        .card {
+          padding: 24px;
+        }
+        
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="card">
+        <h1>Create Department</h1>
+
+        <% if (typeof error !== 'undefined' && error) { %>
+          <div class="error"><%= error %></div>
+        <% } %>
+
+        <% if (typeof success !== 'undefined' && success) { %>
+          <div class="success"><%= success %></div>
+        <% } %>
+
+        <form action="/admin/departments/create" method="POST">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="name">Department Name</label>
+              <input 
+                type="text" 
+                id="name" 
+                name="name" 
+                required 
+                value="<%= typeof department !== 'undefined' ? department.name : '' %>"
+                placeholder="e.g., Computer Science"
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="type">Department Type</label>
+              <select id="type" name="type" required>
+                <option value="">Select type...</option>
+                <option value="academic" <%= typeof department !== 'undefined' && department.type === 'academic' ? 'selected' : '' %>>Academic</option>
+                <option value="administrative" <%= typeof department !== 'undefined' && department.type === 'administrative' ? 'selected' : '' %>>Administrative</option>
+                <option value="research" <%= typeof department !== 'undefined' && department.type === 'research' ? 'selected' : '' %>>Research</option>
+                <option value="support" <%= typeof department !== 'undefined' && department.type === 'support' ? 'selected' : '' %>>Support</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="address">Department Address</label>
+            <textarea 
+              id="address" 
+              name="address" 
+              required 
+              placeholder="Full address of the department"
+            ><%= typeof department !== 'undefined' ? department.address : '' %></textarea>
+          </div>
+
+          <div class="actions">
+            <button type="submit" class="btn btn-primary">Create Department</button>
+            <a  style="text-decoration: none;" href="/admin/departments/manage-users" class="btn btn-secondary">Manage Department Users</a>
+            <!-- new button with empty href as requested -->
+            <a  style="text-decoration: none;" href="/admin/departments" class="btn btn-secondary">Back</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

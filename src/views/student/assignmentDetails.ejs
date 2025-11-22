@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Assignment Details</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          Arial;
+        background: #f6fbf7;
+        color: #1f2937;
+        margin: 0;
+        padding: 24px;
+      }
+      .page {
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      .back-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+      .btn-back {
+        background: #fff;
+        border: 1px solid #e6e6e6;
+        padding: 8px 12px;
+        border-radius: 8px;
+        color: #0f766e;
+        cursor: pointer;
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03);
+        text-decoration: none;
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+      .card {
+        background: #ffffff;
+        padding: 22px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(16, 24, 40, 0.04);
+        border: 1px solid rgba(0, 0, 0, 0.03);
+      }
+      .title {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0 0 8px 0;
+      }
+      .meta {
+        color: #6b7280;
+        font-size: 14px;
+        margin-bottom: 14px;
+      }
+      .field {
+        margin: 8px 0;
+        color: #374151;
+      }
+      .file-link {
+        color: #0f766e;
+        text-decoration: underline;
+      }
+      .badge {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-weight: 600;
+        font-size: 13px;
+        color: white;
+      }
+      .badge.submitted {
+        background: #0ea5c9;
+      }
+      .badge.approved {
+        background: #10b981;
+      }
+      .badge.rejected {
+        background: #ef4444;
+      }
+      .badge.draft {
+        background: #6b7280;
+      }
+      .history {
+        margin-top: 8px;
+      }
+      .history-item {
+        display: flex;
+        gap: 12px;
+        padding: 14px;
+        border-radius: 10px;
+        border: 1px solid rgba(15, 23, 42, 0.04);
+        background: linear-gradient(180deg, #fff, #fafafa);
+      }
+      .history-timeline {
+        width: 28px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 999px;
+        border: 3px solid #e6f6f3;
+        background: transparent;
+        margin-top: 4px;
+      }
+      .dot.submitted {
+        background: #0ea5c9;
+      }
+      .dot.approved {
+        background: #10b981;
+      }
+      .dot.rejected {
+        background: #ef4444;
+      }
+      .history-content {
+        flex: 1;
+      }
+      .history-title {
+        font-weight: 700;
+        color: #111827;
+      }
+      .history-meta {
+        color: #6b7280;
+        font-size: 13px;
+        margin-top: 6px;
+      }
+      .history-signature {
+        margin-top: 8px;
+        color: #065f46;
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .reviewer {
+        border-left: 4px solid #10b981;
+        background: #ecfdf5;
+        padding: 14px;
+        border-radius: 10px;
+        margin-top: 6px;
+        color: #064e3b;
+      }
+      @media (min-width: 900px) {
+        .layout {
+          grid-template-columns: 1fr 360px;
+        }
+        .main-col {
+          order: 1;
+        }
+        .side-col {
+          order: 2;
+        }
+      }
+      .side-col .card {
+        position: sticky;
+        top: 26px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="page">
+      <div class="back-row">
+        <a href="/student/assignments" class="btn-back"
+          >← Back to assignments</a
+        >
+        <h2 style="margin: 0; font-size: 18px; color: #111827">
+          Assignment Details
+        </h2>
+      </div>
+
+      <div class="layout">
+        <!-- MAIN COLUMN -->
+        <div class="main-col">
+          <div class="card">
+            <% if (!assignment) { %>
+
+            <p>No assignment data available.</p>
+
+            <% } else { %> <% var fileName = assignment.filePath ?
+            assignment.filePath.split(/[\\/]/).pop() : ''; %>
+
+            <h3 class="title">
+              <%= assignment.title || 'Untitled Assignment' %>
+            </h3>
+
+            <div class="meta">
+              Category:
+              <strong><%= assignment.category || 'Assignment' %></strong>
+            </div>
+
+            <div class="field">
+              <strong>Description:</strong>
+              <div style="margin-top: 6px; color: #374151">
+                <%= assignment.description || 'No description provided.' %>
+              </div>
+            </div>
+
+            <% if (assignment.filePath) { %>
+            <div class="field">
+              <strong>File:</strong>
+              <div style="margin-top: 6px">
+                <a
+                  class="file-link"
+                  href="/student/assignments/<%= assignment._id %>/download"
+                >
+                  <%= fileName %>
+                </a>
+              </div>
+            </div>
+
+            <div
+              style="
+                margin-top: 12px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+              "
+            >
+              <div>Current Status:</div>
+              <% var st = (assignment.status || 'draft').toLowerCase(); %>
+              <div class="badge <%= st %>">
+                <%= (assignment.status || 'Draft').charAt(0).toUpperCase() +
+                (assignment.status || 'Draft').slice(1) %>
+              </div>
+            </div>
+            <% } %> <% } %>
+          </div>
+
+          <!-- HISTORY -->
+          <% if (typeof history !== 'undefined' && Array.isArray(history) &&
+          history.length) { %>
+          <div class="card history" style="margin-top: 16px">
+            <h4 style="margin: 0 0 12px 0">Approval History</h4>
+
+            <div style="display: flex; flex-direction: column; gap: 10px">
+              <% history.forEach(function(item){ %>
+
+              <div class="history-item">
+                <div class="history-timeline">
+                  <div
+                    class="dot <%= item.type ? item.type.toLowerCase() : '' %>"
+                  ></div>
+                </div>
+
+                <div class="history-content">
+                  <div class="history-title">
+                    <%= item.action %>
+                    <span
+                      style="font-weight: 600; color: #6b7280; font-size: 13px"
+                    >
+                      by <%= item.user.name || 'Unknown' %>, <%= new
+                      Date(item.date).toLocaleDateString() %>
+                    </span>
+                  </div>
+
+                  <% if (item.remarks) { %>
+                  <div class="history-meta"><em><%= item.remarks%></em></div>
+                  <% } %> <% if (item.signature) { %>
+                  <div class="history-signature">
+                    Signature: <%= item.signature %>
+                  </div>
+                  <% } %>
+                </div>
+              </div>
+
+              <% }) %>
+            </div>
+          </div>
+          <% } %>
+        </div>
+
+        <!-- SIDE COLUMN -->
+        <div class="side-col">
+          <div class="card">
+            <h4 style="margin: 0 0 8px 0">Current Reviewer</h4>
+
+            <% if (assignment && assignment.faculty) { %>
+            <div class="reviewer">
+              <div style="font-weight: 700">
+                <%= assignment.faculty.name || 'Reviewer' %>
+              </div>
+            </div>
+            <% } else { %>
+            <div style="color: #6b7280">No reviewer assigned.</div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

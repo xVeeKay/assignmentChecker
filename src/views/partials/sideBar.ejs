@@ -1,0 +1,52 @@
+<style>
+  .sidebar {
+    width: 230px;
+    background: #f9f9f9;
+    padding: 25px 18px;
+    box-sizing: border-box;
+    border-right: 1px solid #e2e2e2;
+    min-height: 100vh;
+  }
+
+  .sidebar h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    color: #1d1d1d;
+    padding-left: 5px;
+  }
+
+  .nav-btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #eaeaea;
+    font-size: 15px;
+    text-align: left;
+    cursor: pointer;
+    color: #333;
+    transition: 0.2s ease;
+  }
+
+  .nav-btn:hover {
+    background: #dcdcdc;
+  }
+
+  .nav-btn:active {
+    background: #cfcfcf;
+  }
+  a{
+    text-decoration: none;
+  }
+</style>
+
+<div class="sidebar">
+  <h3>Navigation</h3>
+
+  <a href="/admin/departments"><button class="nav-btn">Departments</button></a>
+  <a href="/admin/users"><button class="nav-btn">Users</button></a>
+  <a href="/admin/users/create"><button class="nav-btn">Add User</button></a>
+</div>

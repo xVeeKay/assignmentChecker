@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Upload Assignment</title>
+    <style>
+      :root {
+        --primary: #14919b;
+        --card: #ffffff;
+        --border: #e6e9eb;
+        --bg: #f6f8f9;
+        --muted: #6b7280;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica,
+          Arial, sans-serif;
+        background: var(--bg);
+        color: #0f172a;
+        margin: 0;
+        padding: 2rem;
+      }
+      .container {
+        max-width: 880px;
+        margin: 0 auto;
+      }
+
+      .top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+      }
+      h1 {
+        margin: 0;
+        font-size: 1.4rem;
+        color: #0f172a;
+      }
+
+      form.card {
+        background: var(--card);
+        padding: 1.25rem;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 0.75rem;
+      }
+      label {
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: #334155;
+        margin-bottom: 0.35rem;
+      }
+      input[type='text'],
+      input[type='file'],
+      select,
+      textarea {
+        padding: 0.6rem 0.75rem;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 0.95rem;
+        background: #fff;
+      }
+      textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+
+      .full {
+        grid-column: 1/-1;
+      }
+
+      .hint {
+        font-size: 0.85rem;
+        color: var(--muted);
+        margin-top: 0.25rem;
+      }
+
+      .actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1rem;
+      }
+      .btn {
+        padding: 0.6rem 0.9rem;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        font-weight: 700;
+      }
+      .btn-primary {
+        background: var(--primary);
+        color: #fff;
+      }
+      .btn-secondary {
+        background: #fff;
+        border: 1px solid var(--border);
+        color: var(--primary);
+      }
+
+      /* simple alerts */
+      .error {
+        background: #fff1f2;
+        color: #991b1b;
+        padding: 0.6rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+      }
+      .success {
+        background: #ecfdf5;
+        color: #065f46;
+        padding: 0.6rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+      }
+
+      /* responsive */
+      @media (max-width: 720px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        .actions {
+          flex-direction: column-reverse;
+          gap: 0.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="top">
+        <h1>Upload Assignment</h1>
+        <a
+          href="/student/dashboard"
+          style="text-decoration: none; color: var(--primary); font-weight: 700"
+          >Back to Home</a
+        >
+      </div>
+
+      <% if (typeof error !== 'undefined' && error) { %>
+      <div class="error"><%= error %></div>
+      <% } %> <% if (typeof success !== 'undefined' && success) { %>
+      <div class="success"><%= success %></div>
+      <% } %>
+
+      <!--
+        Server-side notes:
+        - Pass `faculty` as an array of professor objects from the student's department only (e.g. [{_id, name}])
+        - Form expects POST /student/assignments/upload with multipart/form-data
+      -->
+
+      <form
+        class="card"
+        action="/student/assignments/upload"
+        method="post"
+        enctype="multipart/form-data"
+      >
+        <div class="grid">
+          <div class="form-group full">
+            <label for="title">Title</label>
+            <input
+              id="title"
+              name="title"
+              type="text"
+              required
+              placeholder="Assignment title"
+              value="<%= typeof title !== 'undefined' ? title : '' %>"
+            />
+          </div>
+
+          <div class="form-group full">
+            <label for="description">Description</label>
+            <textarea
+              id="description"
+              name="description"
+              placeholder="Brief description"
+              required
+            ></textarea>
+            <div class="hint">
+              You can include instructions, links or notes for the reviewer.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="category">Category</label>
+            <select id="category" name="category" required>
+              <option value="">-- Select category --</option>
+              <option value="assignment">Assignment</option>
+              <option value="thesis">Thesis</option>
+              <option value="report">Report</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="file">File upload(up to 5 PDFs)</label>
+            <input
+              id="file"
+              name="files"
+              type="file"
+              accept=".pdf"
+              multiple
+              required
+            />
+            <div class="hint">Allowed: .pdf only</div>
+          </div>
+
+          <div class="form-group full">
+            <label for="reviewer"
+              >Faculty reviewer (professors from your department)</label
+            >
+            <select id="reviewer" name="faculty" required>
+              <option value="">-- Select faculty reviewer --</option>
+              <% if (Array.isArray(faculty) && faculty.length) { %> <%
+              faculty.forEach(function(f){ %>
+              <option value="<%= f._id %>"><%= f.name %></option>
+              <% }) %> <% } else { %>
+              <option value="">No faculty available — contact admin</option>
+              <% } %>
+            </select>
+            <div class="hint">
+              Only professors from your department are shown. Ensure you pick
+              one for review.
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <a class="btn btn-secondary" href="/student/assignments">Cancel</a>
+          <button type="submit" class="btn btn-primary">
+            Upload Assignment
+          </button>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>
