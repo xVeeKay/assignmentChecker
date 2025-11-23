@@ -15,16 +15,26 @@ const userSchema=new mongoose.Schema({
             message:(props)=>`${props.value} is not a valid email.`
         },
     },
-    password:String,    
+    password:{
+        type:String,
+        required:true
+    },    
     phone:Number,
     department:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:'department'
+        ref:'department',
+        required:true
     },
-    role:String,
+    role:{
+        type:String,
+        required:true
+    },
     resetPasswordToken: String,
     resetPasswordExpires: Date,
-    avatar:String
+    avatar:{
+        type:String,
+        default:"https://avatar.iran.liara.run/public/19"
+    }
 },{timestamps:true})
 
 const User=mongoose.model("User",userSchema)

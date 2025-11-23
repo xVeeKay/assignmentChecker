@@ -2,13 +2,22 @@ const express=require('express')
 const router=express.Router()
 const {User}=require('../models/schemas/user.model')
 const {authStudent}=require('../middlewares/student/authStudent.middleware.js')
-const {dashboard,createAssignment, viewAssignments,submitAssignment,downloadAssignment,resubmitAssignment}=require('../controllers/student.controller.js')
+const {dashboard,createAssignment, viewAssignments,submitAssignment,downloadAssignment,resubmitAssignment,logout,changePassword}=require('../controllers/student.controller.js')
 const {Department}=require('../models/schemas/department.model.js')
 const upload=require('../middlewares/student/upload.middleware.js')
 const { Assignment } = require('../models/schemas/assignment.model.js')
 
-
+router.route('/logout').post(authStudent,logout)
 router.route('/dashboard').get(authStudent,dashboard)
+router.route('/profile').get(authStudent,async(req,res)=>{
+    const user=await User.findOne({email:req.user.email})
+    if(!user){
+        return res.render('student/dashboard',{error:"User info not found"})
+    }
+    const submittedCount=await Assignment.countDocuments({student:user._id,status:'submitted'})
+    res.render('student/profile',{user,submittedCount})
+})
+router.route('/change-password').post(authStudent,changePassword)
 router.route('/assignments/upload').get(authStudent,async(req,res)=>{
     const student=await User.findOne({email:req.user.email})
     if (!student) {

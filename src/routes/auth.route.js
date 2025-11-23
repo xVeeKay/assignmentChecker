@@ -20,5 +20,4 @@ router.route('/reset-password/:token').get(async(req,res)=>{
 })
 router.route('/reset-password').post(resetPassword)
 
-
 module.exports=router

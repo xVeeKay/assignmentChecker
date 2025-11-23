@@ -6,14 +6,25 @@ const mongooseSchema=new mongoose.Schema({
     description:String,
     student:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:'User'
+        ref:'User',
+        required:true
     },
-    filePath:String,
-    fileId:String,
-    category:String,
+    filePath:{
+        type:String,
+        required:true
+    },
+    fileId:{
+        type:String,
+        required:true
+    },
+    category:{
+        type:String,
+        required:true
+    },
     faculty:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:'User'
+        ref:'User',
+        required:true
     },
     submittedAt:{
         type:Date,
@@ -21,7 +32,8 @@ const mongooseSchema=new mongoose.Schema({
     },
     status:{
         type:String,
-        default:'draft'
+        default:'draft',
+        required:true
     },
     history:[{
         action: { type: String, enum: ["submitted", "resubmitted", "approved", "rejected"] },
