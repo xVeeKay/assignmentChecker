@@ -245,7 +245,7 @@ const logout=async(req,res)=>{
 const changePassword=async(req,res)=>{
     try {
         const {oldPassword,newPassword,confirmPassword}=req.body
-        const user=await User.findOne({email:req.user.email})
+        const user=await User.findOne({email:req.user.email}).populate('department')
         const submittedCount=await Assignment.countDocuments({student:user._id,status:'submitted'})
         const ok=await bcrypt.compare(oldPassword,user.password)
         if(!ok){

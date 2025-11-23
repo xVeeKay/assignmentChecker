@@ -10,7 +10,7 @@ const { Assignment } = require('../models/schemas/assignment.model.js')
 router.route('/logout').post(authStudent,logout)
 router.route('/dashboard').get(authStudent,dashboard)
 router.route('/profile').get(authStudent,async(req,res)=>{
-    const user=await User.findOne({email:req.user.email})
+    const user=await User.findOne({email:req.user.email}).populate('department')
     if(!user){
         return res.render('student/dashboard',{error:"User info not found"})
     }
