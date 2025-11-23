@@ -9,6 +9,7 @@ const mongooseSchema=new mongoose.Schema({
         ref:'User'
     },
     filePath:String,
+    fileId:String,
     category:String,
     faculty:{
         type:mongoose.Schema.Types.ObjectId,
