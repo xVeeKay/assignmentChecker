@@ -259,6 +259,8 @@ const changePassword=async(req,res)=>{
         res.render('student/profile',{success:"Password changed successfully!",user,submittedCount})
     } catch (error) {
         console.log("Error while changing the password ,",error)
+        const user=await User.findOne({email:req.user.email}).populate('department')
+        const submittedCount=await Assignment.countDocuments({student:user._id,status:'submitted'})
         return res.render('student/profile',{error:"Error while changing the password",user,submittedCount})
     }
 }

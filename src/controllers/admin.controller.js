@@ -82,13 +82,18 @@ const viewDepartments = async (req, res) => {
       .limit(limit)
       .sort({ name: 1 })
     const totalPages = Math.ceil(totalDepartments / limit)
-    const deptData = departments.map((dept) => ({
-      id: dept._id,
-      name: dept.name,
-      type: dept.type,
-      address: dept.address,
-      userCount: dept.users ? dept.users.length : 0,
-    }))
+    const deptData = await Promise.all(
+        departments.map(async (dept) => {
+            const userCount = await User.countDocuments({ department: dept._id });
+            return {
+            id: dept._id,
+            name: dept.name,
+            type: dept.type,
+            address: dept.address,
+            userCount: userCount
+            };
+        })
+    );
     res.render('admin/departmentList', {
       departments: deptData,
       q,
