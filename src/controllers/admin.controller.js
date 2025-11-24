@@ -296,6 +296,16 @@ const deleteUser = async (req, res) => {
   }
 }
 
+const logout=async(req,res)=>{
+  try {
+      res.clearCookie('token')
+      res.redirect('/')
+  } catch (error) {
+      console.log("Error while logging out ",error)
+      res.redirect('/admin/dashboard')
+  }
+}
+
 module.exports = {
   login,
   createDepartment,
@@ -306,4 +316,5 @@ module.exports = {
   viewUsers,
   updateUser,
   deleteUser,
+  logout
 }

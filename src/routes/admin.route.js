@@ -1,6 +1,6 @@
 const express=require('express')
 const router=express.Router()
-const {createDepartment,viewDepartments,updateDepartment,deleteDepartment,createUser,viewUsers,updateUser, deleteUser}=require('../controllers/admin.controller.js')
+const {createDepartment,viewDepartments,updateDepartment,deleteDepartment,createUser,viewUsers,updateUser, deleteUser,logout}=require('../controllers/admin.controller.js')
 const {authAdmin}=require('../middlewares/admin/authAdmin.middleware.js')
 const {Department}=require('../models/schemas/department.model.js')
 const {User}=require('../models/schemas/user.model.js')
@@ -15,7 +15,7 @@ router.route('/dashboard').get(authAdmin,async(req,res)=>{
     const professorCount=await User.countDocuments({role:"professor"})
     res.render('admin/dashboard',{departmentCount,studentCount,hodCount,professorCount})
 })
-
+router.route('/logout').post(authAdmin,logout)
 //department related routes
 router.route('/departments').get(authAdmin,viewDepartments)
 router.route('/departments/create').get(authAdmin,(req,res)=>{res.render('admin/createDepartment')}).post(authAdmin,createDepartment)

@@ -78,8 +78,26 @@
 
   <div class="main">
 
-    <h2 class="dashboard-title">Dashboard Overview</h2>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+    <h2 class="dashboard-title" style="margin: 0;">Dashboard Overview</h2>
 
+    <form action="/admin/logout" method="POST">
+      <button 
+        style="
+          padding: 10px 18px;
+          background: #d9534f;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 14px;
+          font-weight: 600;
+        "
+      >
+        Logout
+      </button>
+    </form>
+  </div>
     <div class="stats-grid">
 
       <div class="stat-card c-blue">
