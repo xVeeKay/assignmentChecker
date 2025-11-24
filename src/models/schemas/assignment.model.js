@@ -2,8 +2,14 @@ const mongoose=require('mongoose')
 const {User}=require('../schemas/user.model.js')
 
 const mongooseSchema=new mongoose.Schema({
-    title:String,
-    description:String,
+    title:{
+        type:String,
+        required:true
+    },
+    description:{
+        type:String,
+        required:true
+    },
     student:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'User',
@@ -37,8 +43,14 @@ const mongooseSchema=new mongoose.Schema({
     },
     history:[{
         action: { type: String, enum: ["submitted", "resubmitted", "approved", "rejected"] },
-        filePath:String,
-        remarks:String,
+        filePath:{
+            type:String,
+            required:true
+        },
+        remarks:{
+            type:String,
+            required:true
+        },
         date:{
             type:Date,
             default:Date.now()
@@ -47,7 +59,10 @@ const mongooseSchema=new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:'User'
         },
-        signature:String
+        signature:{
+            type:String,
+            required:true
+        }
     }]
 },{timestamps:true})
 

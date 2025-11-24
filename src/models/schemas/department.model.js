@@ -1,9 +1,18 @@
 const mongoose=require('mongoose')
 
 const departmentSchema=new mongoose.Schema({
-    name:String,
-    type:String,
-    address:String,
+    name:{
+        type:String,
+        required:true
+    },
+    type:{
+        type:String,
+        required:true
+    },
+    address:{
+        type:String,
+        required:true
+    },
 },{timestamp:true})
 
 const Department=new mongoose.model('department',departmentSchema)

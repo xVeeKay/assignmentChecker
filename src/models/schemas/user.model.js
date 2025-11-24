@@ -3,7 +3,10 @@ const { Department } = require('./department.model');
 
 
 const userSchema=new mongoose.Schema({
-    name:String,
+    name:{
+        type:String,
+        required:true
+    },
     email:{
         type:String,
         unique:true,
@@ -19,7 +22,10 @@ const userSchema=new mongoose.Schema({
         type:String,
         required:true
     },    
-    phone:Number,
+    phone:{
+        type:Number,
+        required:true
+    },
     department:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'department',
