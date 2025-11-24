@@ -159,9 +159,7 @@ const createUser = async (req, res) => {
     })
   }
   const plainPassword = password || crypto.randomBytes(4).toString('hex')
-  console.log(plainPassword)
   const hashedPassword = await bcrypt.hash(plainPassword, 10)
-  console.log(hashedPassword)
   var avatar = 'https://avatar.iran.liara.run/public/19'
   if (req.file && req.file.buffer) {
     const result = await uploadToCloudinary(
@@ -184,9 +182,6 @@ const createUser = async (req, res) => {
   if (req.body.sendEmail) {
     await sendWelcomeEmail(email, name, plainPassword)
   }
-  const dept = await Department.findById(department)
-  dept.users.push(user._id)
-  await dept.save()
 
   res.render('admin/createUser', {
     departments,
