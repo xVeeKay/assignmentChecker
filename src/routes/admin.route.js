@@ -7,6 +7,18 @@ const {User}=require('../models/schemas/user.model.js')
 const upload=require('../middlewares/admin/upload.middleware.js')
 
 
+function sanitizeInput(obj) {
+  if (!obj) return;
+  for (let key in obj) {
+    if (typeof obj[key] === "string") {
+      obj[key] = obj[key].trim();
+      if (obj[key] === "") obj[key] = undefined;
+    }
+  }
+}
+
+
+
 //main pages
 router.route('/dashboard').get(authAdmin,async(req,res)=>{
     const departmentCount=await Department.countDocuments();
@@ -35,7 +47,10 @@ router.route('/departments/:id/delete').delete(authAdmin,deleteDepartment)
 router.route('/users/create').get(authAdmin,async(req,res)=>{
     const departments=await Department.find()
     res.render('admin/createUser',{departments})
-}).post(authAdmin,upload.single("avatar"),createUser)
+}).post(authAdmin,upload.single("avatar"),(req, res, next) => {
+    sanitizeInput(req.body);
+    next();
+  },createUser)
 router.route('/users').get(authAdmin,viewUsers)
 router.route('/users/:id/edit').get(authAdmin,async(req,res)=>{
     const id=req.params.id

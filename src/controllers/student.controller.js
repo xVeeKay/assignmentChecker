@@ -36,6 +36,9 @@ const createAssignment = async (req, res) => {
   try {
     const { title, description, category, faculty } = req.body
     const student = await User.findOne({ email: req.user.email })
+    if (!student) {
+        return res.status(404).send('Student not found');
+    }
     if (!req.files || req.files.length === 0) {
       return res.render('student/uploadAssignment', {
         error: 'Please upload atleast 1 file! 🥲',
@@ -48,8 +51,8 @@ const createAssignment = async (req, res) => {
         'assignmentChecker/assignments'
       )
       const newAssignment = await Assignment.create({
-        title: title || file.originalname,
-        description: description || '',
+        title: title,
+        description,
         category,
         filePath: result.secure_url,
         fileId: result.public_id,
@@ -62,8 +65,11 @@ const createAssignment = async (req, res) => {
     res.redirect('/student/assignments')
   } catch (error) {
     console.log(error)
+    const student = await User.findOne({ email: req.user.email })
+    const faculties=await User.find({department:student.department,role:'professor'})
     res.render('student/uploadAssignment', {
-      error: 'Error while uploading assignment!',
+      error: 'Error while uploading assignment! May be checks if info is correct and valid',
+      faculty:faculties
     })
   }
 }

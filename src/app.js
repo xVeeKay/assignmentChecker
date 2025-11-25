@@ -14,16 +14,29 @@ app.use(cookieParser())
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
 app.use((req, res, next) => {
+  // sanitize req.body
   if (req.body) {
-    for (let key in req.body) {
-      if (typeof req.body[key] === "string") {
-        req.body[key] = req.body[key].trim();
-        if (req.body[key] === "") req.body[key] = undefined;
+    Object.keys(req.body).forEach(k => {
+      if (typeof req.body[k] === "string") {
+        let trimmed = req.body[k].trim();
+        req.body[k] = trimmed === "" ? undefined : trimmed;
       }
-    }
+    });
   }
+
+  // sanitize req.fields (multer sometimes uses this)
+  if (req.fields) {
+    Object.keys(req.fields).forEach(k => {
+      if (typeof req.fields[k] === "string") {
+        let trimmed = req.fields[k].trim();
+        req.fields[k] = trimmed === "" ? undefined : trimmed;
+      }
+    });
+  }
+
   next();
 });
+
 
 app.get('/',(req,res)=>{res.render('auth/login')})
 app.post('/login',login)
