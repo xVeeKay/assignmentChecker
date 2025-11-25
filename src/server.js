@@ -13,8 +13,8 @@ app.set('views',path.join(__dirname,'views'))
 
 connectDb()
 .then(()=>{
-    app.listen(process.env.port,()=>{
-    console.log(`Server started at ${process.env.port}...`)
+    app.listen(process.env.PORT,()=>{
+    console.log(`Server started at ${process.env.PORT}...`)
     })
 })
 .catch((err)=>{
