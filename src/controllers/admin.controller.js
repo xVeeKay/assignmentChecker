@@ -6,6 +6,8 @@ const { User } = require('../models/schemas/user.model.js')
 const { sendWelcomeEmail } = require('../utils/admin/sendEmail.js')
 const { Assignment } = require('../models/schemas/assignment.model.js')
 const { uploadToCloudinary } = require('../utils/admin/cloudinary.js')
+const csv=require('csv-parser')
+const { Readable } = require('stream')
 
 const adminEmail = 'admin@a.com'
 const pass = '123'
@@ -301,6 +303,70 @@ const logout=async(req,res)=>{
   }
 }
 
+const bulkUserCreation=async(req,res)=>{
+  try {
+    if(!req.file){
+      return res.render('admin/bulkUserCreation',{error:"File is required!"})
+    }
+    const rows=[]
+    const stream=Readable.from(req.file.buffer.toString())
+    stream
+      .pipe(csv())
+      .on('data',(data)=>rows.push(data))
+      .on('end',async()=>{
+        var added=0;
+        var skipped=0;
+        for(let row of rows){
+          let {name,email,password,phone,department,role}=row
+          name = name?.trim();
+          email = email?.trim().toLowerCase();
+          password = password?.trim();
+          phone = phone?.trim();
+          department = department?.trim();
+          role = role?.trim();
+          if (!name || !email || !password || !phone || !department || !role) {
+            skipped++;
+            continue;
+          }
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            skipped++;
+            continue;
+          }
+          if (isNaN(Number(phone))) {
+            skipped++;
+            continue;
+          }
+          const dept = await Department.findOne({ name: department });
+          if (!dept) {
+            skipped++;
+            continue;
+          }
+          const exists=await User.findOne({email})
+          if(exists){
+            skipped++;
+            continue
+          }
+          const hashedPassword=await bcrypt.hash(password,10)
+          const user = new User({
+              name,
+              email,
+              password:hashedPassword,
+              phone,
+              department:dept._id,
+              role,
+          })
+          await user.validate()
+          await user.save()
+          added++
+        }
+        return res.render('admin/bulkUserCreation',{success:`Upload complete! Added: ${added}, Skipped: ${skipped}`})
+      })
+  } catch (error) {
+    console.log("Error while bulk uploading user, ",error)
+    return res.render('admin/bulkUserCreation',{error:"Internal server error!"})
+  }
+}
+
 module.exports = {
   login,
   createDepartment,
@@ -311,5 +377,6 @@ module.exports = {
   viewUsers,
   updateUser,
   deleteUser,
-  logout
+  logout,
+  bulkUserCreation,
 }

@@ -1,10 +1,13 @@
 const express=require('express')
 const router=express.Router()
-const {createDepartment,viewDepartments,updateDepartment,deleteDepartment,createUser,viewUsers,updateUser, deleteUser,logout}=require('../controllers/admin.controller.js')
+const {createDepartment,viewDepartments,updateDepartment,deleteDepartment,createUser,viewUsers,updateUser, deleteUser,logout,bulkUserCreation}=require('../controllers/admin.controller.js')
 const {authAdmin}=require('../middlewares/admin/authAdmin.middleware.js')
 const {Department}=require('../models/schemas/department.model.js')
 const {User}=require('../models/schemas/user.model.js')
 const upload=require('../middlewares/admin/upload.middleware.js')
+
+const multer = require('multer');
+const upload2 = multer({ storage: multer.memoryStorage() });
 
 
 function sanitizeInput(obj) {
@@ -59,6 +62,8 @@ router.route('/users/:id/edit').get(authAdmin,async(req,res)=>{
     res.render('admin/editUser',{user,departments})
 }).post(authAdmin,updateUser)
 router.route('/users/:id/delete').delete(authAdmin,deleteUser)
+
+router.route('/bulk-user-creation').get(authAdmin,async(req,res)=>{res.render('admin/bulkUserCreation')}).post(authAdmin,upload2.single('csvFile'),bulkUserCreation)
 
 
 
