@@ -259,9 +259,9 @@
 
                   <% if (item.remarks) { %>
                   <div class="history-meta"><em><%= item.remarks%></em></div>
-                  <% } %> <% if (item.signature) { %>
+                  <% } %> <% if (item.signature.raw) { %>
                   <div class="history-signature">
-                    Signature: <%= item.signature %>
+                    Signature: <%= item.signature.raw %>
                   </div>
                   <% } %>
                 </div>

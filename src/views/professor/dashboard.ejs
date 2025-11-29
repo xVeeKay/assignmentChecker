@@ -268,7 +268,7 @@
                   <%= a.student.name %> - <%= a.title %>
                 </div>
                 <div class="assignment-meta">
-                  Submitted: <%= a.submittedAt %> · <%= typeof a.daysPending !== 'undefined' ? a.daysPending : 0 %> days
+                  Submitted: <%= a.submittedAt.toLocaleDateString("en-IN") %> · <%= typeof a.daysPending !== 'undefined' ? a.daysPending : 0 %> days
                   pending
                 </div>
               </div>
@@ -276,11 +276,6 @@
               <div class="actions">
                 <a href="/professor/review/<%= a._id %>" class="btn btn-review"
                   >Review</a
-                >
-                <a
-                  href="/professor/assignments/<%= a._id %>"
-                  class="btn btn-details"
-                  >Details</a
                 >
               </div>
             </div>

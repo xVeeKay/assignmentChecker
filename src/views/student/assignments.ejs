@@ -343,7 +343,7 @@
                 >
                 <%if(a.status==='rejected'){%>
                 <a style="text-decoration: none;" class="btn-resubmit" href="/student/assignments/<%= a._id %>/resubmit">Resubmit</a>
-                <%}else{%>
+                <%}else if(a.status==='draft'){%>
                 <button
                   class="btn-submit"
                   onclick="submitAssignment('<%= a._id%>')"

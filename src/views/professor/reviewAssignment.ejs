@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Review Assignment</title>
+    <style>
+      :root {
+        --primary: #064e3b;
+        --bg: #f8faf9;
+        --card: #ffffff;
+        --border: #e5e7eb;
+        --muted: #6b7280;
+        --success: #10b981;
+        --danger: #ef4444;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          'Helvetica Neue', Arial, sans-serif;
+        background: var(--bg);
+        color: #1f2937;
+        padding: 24px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .header {
+        margin-bottom: 24px;
+      }
+
+      .header h1 {
+        font-size: 24px;
+        font-weight: 700;
+        color: #111827;
+      }
+
+      .error {
+        background: #fee2e2;
+        color: #991b1b;
+        padding: 12px 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border-left: 4px solid #ef4444;
+        font-size: 14px;
+      }
+
+      .success {
+        background: #dcfce7;
+        color: #166534;
+        padding: 12px 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border-left: 4px solid #22c55e;
+        font-size: 14px;
+      }
+
+      .info-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+
+      .info-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 16px;
+      }
+
+      .info-label {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 6px;
+      }
+
+      .info-value {
+        font-size: 15px;
+        font-weight: 600;
+        color: #111827;
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+
+      .status-submitted {
+        background: #ecfdf5;
+        color: #065f46;
+      }
+
+      .status-pending {
+        background: #fef3c7;
+        color: #92400e;
+      }
+
+      .status-rejected {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+
+      .status-approved {
+        background: #dbeafe;
+        color: #1e40af;
+      }
+
+      .content-wrapper {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-bottom: 24px;
+      }
+
+      .panel {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 20px;
+      }
+
+      .panel h3 {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 12px;
+      }
+
+      .description {
+        font-size: 14px;
+        line-height: 1.6;
+        color: #374151;
+        max-height: 200px;
+        overflow-y: auto;
+      }
+
+      .file-preview {
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 16px;
+        background: #f9fafb;
+        max-height: 400px;
+        overflow-y: auto;
+      }
+
+      .preview-title {
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 12px;
+        color: #111827;
+      }
+
+      .preview-content {
+        font-size: 13px;
+        line-height: 1.6;
+        color: #374151;
+      }
+
+      .remarks-section {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 24px;
+      }
+
+      .remarks-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 12px;
+        display: block;
+      }
+
+      textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 14px;
+        font-family: inherit;
+        resize: vertical;
+        min-height: 120px;
+        box-sizing: border-box;
+      }
+
+      textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(6, 78, 59, 0.1);
+      }
+
+      .signature-section {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 24px;
+      }
+
+      .signature-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 12px;
+        display: block;
+      }
+
+      .signature-input {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        font-size: 14px;
+        box-sizing: border-box;
+      }
+
+      .signature-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(6, 78, 59, 0.1);
+      }
+
+      .actions {
+        display: flex;
+        gap: 12px;
+      }
+
+      .btn {
+        flex: 1;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .btn-approve {
+        background: var(--success);
+        color: white;
+      }
+
+      .btn-approve:hover {
+        background: #059669;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+      }
+
+      .btn-reject {
+        background: var(--danger);
+        color: white;
+      }
+
+      .btn-reject:hover {
+        background: #dc2626;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+      }
+
+      .btn-back {
+        background: #e5e7eb;
+        color: #374151;
+      }
+
+      .btn-back:hover {
+        background: #d1d5db;
+      }
+
+      @media (max-width: 1024px) {
+        .content-wrapper {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 768px) {
+        body {
+          padding: 16px;
+        }
+
+        .info-cards {
+          grid-template-columns: 1fr;
+        }
+
+        .actions {
+          flex-direction: column;
+        }
+
+        .btn {
+          width: 100%;
+        }
+      }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </head>
+  <body>
+    <div class="container">
+      <% if (typeof error !== 'undefined' && error) { %>
+      <div class="error"><%= error %></div>
+      <% } %> <% if (typeof success !== 'undefined' && success) { %>
+      <div class="success"><%= success %></div>
+      <% } %>
+
+      <div class="header">
+        <h1>Review Assignment</h1>
+      </div>
+
+      <!-- Info Cards -->
+      <div class="info-cards">
+        <div class="info-card">
+          <div class="info-label">Student Name</div>
+          <div class="info-value"><%= assignment.student.name %></div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-label">Assignment Title</div>
+          <div class="info-value"><%= assignment.title %></div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-label">Status</div>
+          <% var status = (assignment.status || 'submitted').toLowerCase(); %>
+          <span class="status-badge status-<%= status %>">
+            <%= status.charAt(0).toUpperCase() + status.slice(1) %>
+          </span>
+        </div>
+
+        <div class="info-card">
+          <div class="info-label">Submitted On</div>
+          <div class="info-value"><%= assignment.submittedAt.toLocaleDateString("en-IN") %></div>
+        </div>
+      </div>
+
+      <!-- Description and File Preview -->
+      <div class="content-wrapper">
+        <div class="panel">
+          <h3>Description</h3>
+          <div class="description"><%= assignment.description %></div>
+        </div>
+
+        <div class="panel">
+          <h3>Assignment File Preview:</h3>
+          <div class="file-preview">
+            <div class="preview-title">
+              <%= assignment.fileName || 'File Preview' %>
+            </div>
+            <div class="preview-content">
+              <% if (assignment.filePath) { %>
+                <iframe 
+                    src="https://docs.google.com/gview?embedded=true&url=<%= assignment.filePath %>" 
+                    style="width:100%; height:650px; border:none;">
+                </iframe>
+              <% } else { %>
+              <p>File preview not available</p>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Remarks Section -->
+      <div class="remarks-section">
+        <label class="remarks-label">Remarks:</label>
+        <textarea
+          name="remarks"
+          id="remarks"
+          placeholder="Enter remarks for student..."
+        ></textarea>
+      </div>
+
+      <!-- Signature Section -->
+      <div class="signature-section">
+        <label class="signature-label">Signature (Text Only):</label>
+        <input
+          type="text"
+          class="signature-input"
+          id="signature"
+          name="signature"
+          placeholder="Enter your signature"
+        />
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="actions">
+        <a href="/professor/assignments" class="btn btn-back">Back</a>
+        <button type="button" onclick="handleReject('<%= assignment._id%>')" class="btn btn-reject" id="rejectBtn">
+          ✕ Reject Assignment
+        </button>
+        <button type="button" onclick="handleApprove('<%= assignment._id%>')" class="btn btn-approve" id="approveBtn">
+          ✓ Approve Assignment
+        </button>
+      </div>
+    </div>
+    <script>
+        async function handleApprove(id){
+            const remarks=document.querySelector('#remarks').value
+            const signature=document.querySelector('#signature').value
+            const res=await fetch(`/professor/approve/${id}`,{
+                method:"POST",
+                headers: { "Content-Type": "application/json" },
+                body:JSON.stringify({
+                    remarks,
+                    signature
+                })
+            })
+            const data=await res.json()
+            if (!data.success) {
+				Swal.fire({
+					title: "Error",
+					text: data.message,
+					icon: "error",
+				});
+				return;                
+			}
+            Swal.fire({
+				title: "Approved!",
+				text: data.message,
+				icon: "success",
+			}).then(() => location.reload());
+        }
+        async function handleReject(id){
+			const result = await Swal.fire({
+				title: "Reject Assignment?",
+				text: "This action cannot be undone.",
+				icon: "warning",
+				showCancelButton: true,
+				confirmButtonText: "Yes, Reject",
+				cancelButtonText: "Cancel",
+				confirmButtonColor: "#dc2626",
+			});
+
+			if (!result.isConfirmed) return;
+            const remarks=document.querySelector('#remarks').value
+            const signature=document.querySelector('#signature').value
+            const res=await fetch(`/professor/reject/${id}`,{
+                method:"POST",
+                headers: { "Content-Type": "application/json" },
+                body:JSON.stringify({
+                    remarks,
+                    signature
+                })
+            })
+            const data=await res.json()
+            if (!data.success) {
+				Swal.fire({
+					title: "Error",
+					text: data.message,
+					icon: "error",
+				});
+				return;                
+			}
+            Swal.fire({
+				title: "Rejected!",
+				text: data.message,
+				icon: "success",
+			}).then(() => location.reload());
+        }
+    </script>
+  </body>
+</html>

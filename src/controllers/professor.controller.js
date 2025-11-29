@@ -1,6 +1,7 @@
 const { User } = require('../models/schemas/user.model')
 const { Assignment } = require('../models/schemas/assignment.model.js')
 const bcrypt = require('bcrypt')
+const crypto=require('crypto')
 
 
 
@@ -19,8 +20,73 @@ const dashboard=async(req,res)=>{
     }
 }
 
+const approveAssignment=async(req,res)=>{
+    try {
+        const {remarks,signature}=req.body
+        const id=req.params.id
+        const assignment=await Assignment.findById(id)
+        if(!assignment){
+            return res.json({success:false,message:"Assignment not found!"})
+        }
+        const user=await User.findOne({email:req.user.email})
+        if(!user){
+            return res.json({success:false,message:"Current user not found!"})
+        }
+        const hashedSignature=crypto.createHash('sha256').update(signature).digest('hex')
+        assignment.history.push({
+            action:"approved",
+            filePath:assignment.filePath,
+            remarks,
+            user:user._id,
+            signature:{
+                raw:signature,
+                hash:hashedSignature
+            }
+        })
+        assignment.status="approved"
+        await assignment.save()
+        return res.json({success:true,message:"Assignment approved successfully!🎊"})
+    } catch (error) {
+        console.log("error while approving the assignment ",error)
+        return res.json({success:false,message:"error while approving the assignment!"})
+    }
+}
+
+const rejectAssignment=async(req,res)=>{
+    try {
+        const {remarks,signature}=req.body
+        const id=req.params.id
+        const assignment=await Assignment.findById(id)
+        if(!assignment){
+            return res.json({success:false,message:"Assignment not found!"})
+        }
+        const user=await User.findOne({email:req.user.email})
+        if(!user){
+            return res.json({success:false,message:"Current user not found!"})
+        }
+        const hashedSignature=crypto.createHash('sha256').update(signature).digest('hex')
+        assignment.history.push({
+            action:"rejected",
+            filePath:assignment.filePath,
+            remarks,
+            user:user._id,
+            signature:{
+                raw:signature,
+                hash:hashedSignature
+            }
+        })
+        assignment.status="rejected"
+        await assignment.save()
+        return res.json({success:true,message:"Assignment rejected successfully!"})
+    } catch (error) {
+        console.log("error while rejecting the assignment ",error)
+        return res.json({success:false,message:"error while rejecting the assignment!"})
+    }
+}
+
 
 module.exports = {
   dashboard,
-  
+  approveAssignment,
+  rejectAssignment
 }

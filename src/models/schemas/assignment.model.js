@@ -42,7 +42,7 @@ const mongooseSchema=new mongoose.Schema({
         required:true
     },
     history:[{
-        action: { type: String, enum: ["submitted", "resubmitted", "approved", "rejected"] },
+        action: { type: String, enum: ["submitted", "resubmitted", "approved", "rejected","forwarded"] },
         filePath:{
             type:String,
             required:true
@@ -59,8 +59,9 @@ const mongooseSchema=new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:'User'
         },
-        signature:{
-            type:String,
+        signature: {
+            raw: { type: String,}, 
+            hash: { type: String,} 
         }
     }]
 },{timestamps:true})
