@@ -17,6 +17,14 @@ router.route('/review/:id').get(authProfessor,async(req,res)=>{
 })
 router.route('/approve/:id').post(authProfessor,approveAssignment)
 router.route('/reject/:id').post(authProfessor,rejectAssignment)
+router.route('/reviews').get(authProfessor,async(req,res)=>{
+    const user=await User.findOne({email:req.user.email})
+    const assignments = await Assignment.find({
+        faculty: user._id,
+        status: { $in: ["rejected", "approved"] }
+    }).populate('student');
+    res.render('professor/reviews',{assignments})
+})
 
 module.exports=router
 
