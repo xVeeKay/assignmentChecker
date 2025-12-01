@@ -184,11 +184,17 @@
         border-radius: 999px;
         font-size: 0.85rem;
         font-weight: 700;
-        color: #fff;
+        color: #000000;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
       }
       .badge.draft {
         background: #6b7280;
+      }
+      /* Forwarded badge */
+      .badge.forwarded {
+        background: #f3e8ff;
+        color: #6b21a8;
+        box-shadow: none;
       }
       .badge.submitted {
         background: #3b82f6;
@@ -242,9 +248,11 @@
         }
       }
     </style>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
   </head>
   <body>
     <div class="container">
@@ -342,7 +350,12 @@
                   >View</a
                 >
                 <%if(a.status==='rejected'){%>
-                <a style="text-decoration: none;" class="btn-resubmit" href="/student/assignments/<%= a._id %>/resubmit">Resubmit</a>
+                <a
+                  style="text-decoration: none"
+                  class="btn-resubmit"
+                  href="/student/assignments/<%= a._id %>/resubmit"
+                  >Resubmit</a
+                >
                 <%}else if(a.status==='draft'){%>
                 <button
                   class="btn-submit"
@@ -426,48 +439,47 @@
 
       async function submitAssignment(id) {
         const result = await Swal.fire({
-          title: "Submit Assignment?",
-          text: "Once submitted, you cannot edit it unless it gets rejected.",
-          icon: "question",
+          title: 'Submit Assignment?',
+          text: 'Once submitted, you cannot edit it unless it gets rejected.',
+          icon: 'question',
           showCancelButton: true,
-          confirmButtonText: "Yes, submit",
-          cancelButtonText: "Cancel",
-          confirmButtonColor: "#0f766e",
-        });
+          confirmButtonText: 'Yes, submit',
+          cancelButtonText: 'Cancel',
+          confirmButtonColor: '#0f766e',
+        })
 
-        if (!result.isConfirmed) return;
+        if (!result.isConfirmed) return
 
         try {
           const res = await fetch(`/student/assignments/${id}/submit`, {
-            method: "POST",
-          });
+            method: 'POST',
+          })
 
-          const data = await res.json();
+          const data = await res.json()
 
           if (!data.success) {
             Swal.fire({
-              title: "Failed",
+              title: 'Failed',
               text: data.message,
-              icon: "error",
-            });
-            return;
+              icon: 'error',
+            })
+            return
           }
 
           Swal.fire({
-            title: "Submitted!",
+            title: 'Submitted!',
             text: data.message,
-            icon: "success",
+            icon: 'success',
             timer: 1500,
             showConfirmButton: false,
-          }).then(() => location.reload());
-
+          }).then(() => location.reload())
         } catch (error) {
-          console.log(error);
+          console.log(error)
           Swal.fire({
-            title: "Error",
-            text: "An error occurred while submitting your assignment! 👽",
-            icon: "error",
-          });
+            title: 'Error',
+            text: 'An error occurred while submitting your assignment! 👽',
+            icon: 'error',
+          })
         }
       }
     </script>

@@ -206,35 +206,5 @@
         <% } %>
       </section>
     </div>
-
-    <script>
-      ;(function () {
-        const search = document.getElementById('search')
-        const filter = document.getElementById('filter')
-        const list = document.getElementById('reviewsList')
-        const count = document.getElementById('count')
-        if (!list) return
-
-        function refresh() {
-          const q = (search.value || '').trim().toLowerCase()
-          const f = (filter.value || 'all').toLowerCase()
-          let visible = 0
-          Array.from(list.children).forEach((card) => {
-            const title = card.getAttribute('data-title') || ''
-            const student = card.getAttribute('data-student') || ''
-            const status = card.getAttribute('data-status') || ''
-            const matchesQuery = !q || title.includes(q) || student.includes(q)
-            const matchesFilter = f === 'all' || status === f
-            const show = matchesQuery && matchesFilter
-            card.style.display = show ? '' : 'none'
-            if (show) visible++
-          })
-          count.textContent = visible + ' review' + (visible === 1 ? '' : 's')
-        }
-
-        search.addEventListener('input', refresh)
-        filter.addEventListener('change', refresh)
-      })()
-    </script>
   </body>
 </html>

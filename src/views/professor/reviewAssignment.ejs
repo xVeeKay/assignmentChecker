@@ -122,6 +122,12 @@
         color: #1e40af;
       }
 
+      /* Forwarded status */
+      .status-forwarded {
+        background: #f3e8ff; /* light violet */
+        color: #6b21a8; /* dark purple */
+      }
+
       .content-wrapper {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -295,6 +301,142 @@
         background: #d1d5db;
       }
 
+      .btn-forward {
+        background: #7c3aed;
+        color: white;
+      }
+
+      .btn-forward:hover {
+        background: #6d28d9;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+      }
+
+      /* Modal Styles */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+
+      .modal.active {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal-content {
+        background-color: var(--card);
+        padding: 28px;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 500px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+      }
+
+      .modal-header {
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #111827;
+      }
+
+      .modal-close {
+        background: transparent;
+        border: none;
+        font-size: 28px;
+        cursor: pointer;
+        color: var(--muted);
+        line-height: 1;
+      }
+
+      .modal-close:hover {
+        color: #111827;
+      }
+
+      .form-group {
+        margin-bottom: 18px;
+      }
+
+      .form-label {
+        display: block;
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 8px;
+        color: #111827;
+      }
+
+      .form-select,
+      .form-textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 14px;
+        font-family: inherit;
+        box-sizing: border-box;
+      }
+
+      .form-select:focus,
+      .form-textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(6, 78, 59, 0.1);
+      }
+
+      .form-textarea {
+        resize: vertical;
+        min-height: 100px;
+      }
+
+      .modal-footer {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        margin-top: 24px;
+      }
+
+      .btn-modal-cancel {
+        background: #e5e7eb;
+        color: #374151;
+        padding: 10px 16px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .btn-modal-cancel:hover {
+        background: #d1d5db;
+      }
+
+      .btn-modal-forward {
+        background: #7c3aed;
+        color: #fff;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .btn-modal-forward:hover {
+        background: #6d28d9;
+      }
+
+      .btn-modal-forward:disabled {
+        background: #d1d5db;
+        cursor: not-allowed;
+      }
+
       @media (max-width: 1024px) {
         .content-wrapper {
           grid-template-columns: 1fr;
@@ -319,8 +461,11 @@
         }
       }
     </style>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   </head>
   <body>
     <div class="container">
@@ -356,7 +501,9 @@
 
         <div class="info-card">
           <div class="info-label">Submitted On</div>
-          <div class="info-value"><%= assignment.submittedAt.toLocaleDateString("en-IN") %></div>
+          <div class="info-value">
+            <%= assignment.submittedAt.toLocaleDateString("en-IN") %>
+          </div>
         </div>
       </div>
 
@@ -375,10 +522,11 @@
             </div>
             <div class="preview-content">
               <% if (assignment.filePath) { %>
-                <iframe 
-                    src="https://docs.google.com/gview?embedded=true&url=<%= assignment.filePath %>" 
-                    style="width:100%; height:650px; border:none;">
-                </iframe>
+              <iframe
+                src="https://docs.google.com/gview?embedded=true&url=<%= assignment.filePath %>"
+                style="width: 100%; height: 650px; border: none"
+              >
+              </iframe>
               <% } else { %>
               <p>File preview not available</p>
               <% } %>
@@ -412,78 +560,259 @@
       <!-- Action Buttons -->
       <div class="actions">
         <a href="/professor/assignments" class="btn btn-back">Back</a>
-        <button type="button" onclick="handleReject('<%= assignment._id%>')" class="btn btn-reject" id="rejectBtn">
+        <button
+          type="button"
+          onclick="handleReject('<%= assignment._id%>')"
+          class="btn btn-reject"
+          id="rejectBtn"
+        >
           ✕ Reject Assignment
         </button>
-        <button type="button" onclick="handleApprove('<%= assignment._id%>')" class="btn btn-approve" id="approveBtn">
+        <button
+          type="button"
+          onclick="handleApprove('<%= assignment._id%>')"
+          class="btn btn-approve"
+          id="approveBtn"
+        >
           ✓ Approve Assignment
         </button>
+        <button
+          type="button"
+          onclick="openForwardModal()"
+          class="btn btn-forward"
+          id="forwardBtn"
+        >
+          ➤ Forward to Faculty
+        </button>
+      </div>
+
+      <!-- Forward Modal -->
+      <div id="forwardModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <div>Forward to Faculty</div>
+            <button
+              class="modal-close"
+              id="closeModal"
+              aria-label="Close modal"
+            >
+              &times;
+            </button>
+          </div>
+          <form id="forwardForm">
+            <div class="form-group">
+              <label class="form-label">Assignment</label>
+              <div
+                style="
+                  padding: 12px;
+                  background: #f3f4f6;
+                  border-radius: 8px;
+                  font-size: 14px;
+                  font-weight: 600;
+                  color: #374151;
+                "
+              >
+                <span id="modalAssignmentTitle"
+                  ><%= assignment.title || 'Untitled Assignment' %></span
+                >
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="facultySelect" class="form-label"
+                >Select Faculty *</label
+              >
+              <select
+                id="facultySelect"
+                class="form-select"
+                required
+                aria-label="Select faculty"
+              >
+                <option value="">— Choose a faculty —</option>
+                <% if (faculties && faculties.length > 0) { %> <%
+                faculties.forEach(f => { %>
+                <option value="<%= f._id || f.id %>">
+                  <%= f.name %> (<%= f.department.name || 'Department' %>)
+                </option>
+                <% }); %> <% } else { %>
+                <option value="" disabled>No faculties available</option>
+                <% } %>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="forwardMessage" class="form-label"
+                >Forward Message (Optional)</label
+              >
+              <textarea
+                id="forwardMessage"
+                class="form-textarea"
+                placeholder="Add notes or context about why you're forwarding this assignment..."
+                aria-label="Forwarding message"
+              ></textarea>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn-modal-cancel" id="cancelBtn">
+                Cancel
+              </button>
+              <button type="submit" class="btn-modal-forward">
+                Forward Now
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
     <script>
-        async function handleApprove(id){
-            const remarks=document.querySelector('#remarks').value
-            const signature=document.querySelector('#signature').value
-            const res=await fetch(`/professor/approve/${id}`,{
-                method:"POST",
-                headers: { "Content-Type": "application/json" },
-                body:JSON.stringify({
-                    remarks,
-                    signature
-                })
-            })
-            const data=await res.json()
-            if (!data.success) {
-				Swal.fire({
-					title: "Error",
-					text: data.message,
-					icon: "error",
-				});
-				return;                
-			}
-            Swal.fire({
-				title: "Approved!",
-				text: data.message,
-				icon: "success",
-			}).then(() => location.reload());
-        }
-        async function handleReject(id){
-			const result = await Swal.fire({
-				title: "Reject Assignment?",
-				text: "This action cannot be undone.",
-				icon: "warning",
-				showCancelButton: true,
-				confirmButtonText: "Yes, Reject",
-				cancelButtonText: "Cancel",
-				confirmButtonColor: "#dc2626",
-			});
+      let currentAssignmentId = '<%= assignment._id %>'
 
-			if (!result.isConfirmed) return;
-            const remarks=document.querySelector('#remarks').value
-            const signature=document.querySelector('#signature').value
-            const res=await fetch(`/professor/reject/${id}`,{
-                method:"POST",
-                headers: { "Content-Type": "application/json" },
-                body:JSON.stringify({
-                    remarks,
-                    signature
-                })
-            })
-            const data=await res.json()
-            if (!data.success) {
-				Swal.fire({
-					title: "Error",
-					text: data.message,
-					icon: "error",
-				});
-				return;                
-			}
+      function openForwardModal() {
+        const modal = document.getElementById('forwardModal')
+        modal.classList.add('active')
+      }
+
+      function closeForwardModal() {
+        const modal = document.getElementById('forwardModal')
+        modal.classList.remove('active')
+      }
+
+      document.addEventListener('DOMContentLoaded', function () {
+        const modal = document.getElementById('forwardModal')
+        const closeBtn = document.getElementById('closeModal')
+        const cancelBtn = document.getElementById('cancelBtn')
+        const forwardForm = document.getElementById('forwardForm')
+
+        closeBtn.addEventListener('click', closeForwardModal)
+        cancelBtn.addEventListener('click', closeForwardModal)
+
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) closeForwardModal()
+        })
+
+        forwardForm.addEventListener('submit', async (e) => {
+          e.preventDefault()
+
+          const facultyId = document.getElementById('facultySelect').value
+          const forwardMessage = document
+            .getElementById('forwardMessage')
+            .value.trim()
+
+          if (!facultyId) {
             Swal.fire({
-				title: "Rejected!",
-				text: data.message,
-				icon: "success",
-			}).then(() => location.reload());
+              title: 'Error',
+              text: 'Please select a faculty to forward to.',
+              icon: 'error',
+            })
+            return
+          }
+
+          try {
+            const response = await fetch('/professor/forward-assignment', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                assignmentId: currentAssignmentId,
+                forwardToFacultyId: facultyId,
+                forwardMessage: forwardMessage,
+              }),
+            })
+
+            const data = await response.json()
+
+            if (!data.success) {
+              Swal.fire({
+                title: 'Error',
+                text: data.message || 'Failed to forward assignment',
+                icon: 'error',
+              })
+              return
+            }
+
+            Swal.fire({
+              title: 'Forwarded!',
+              text: data.message || 'Assignment forwarded successfully.',
+              icon: 'success',
+            }).then(() => {
+              closeForwardModal()
+              location.reload()
+            })
+          } catch (err) {
+            console.error('Forward error:', err)
+            Swal.fire({
+              title: 'Error',
+              text: 'An error occurred while forwarding the assignment.',
+              icon: 'error',
+            })
+          }
+        })
+      })
+
+      async function handleApprove(id) {
+        const remarks = document.querySelector('#remarks').value
+        const signature = document.querySelector('#signature').value
+        const res = await fetch(`/professor/approve/${id}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            remarks,
+            signature,
+          }),
+        })
+        const data = await res.json()
+        if (!data.success) {
+          Swal.fire({
+            title: 'Error',
+            text: data.message,
+            icon: 'error',
+          })
+          return
         }
+        Swal.fire({
+          title: 'Approved!',
+          text: data.message,
+          icon: 'success',
+        }).then(() => location.reload())
+      }
+      async function handleReject(id) {
+        const result = await Swal.fire({
+          title: 'Reject Assignment?',
+          text: 'This action cannot be undone.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Yes, Reject',
+          cancelButtonText: 'Cancel',
+          confirmButtonColor: '#dc2626',
+        })
+
+        if (!result.isConfirmed) return
+        const remarks = document.querySelector('#remarks').value
+        const signature = document.querySelector('#signature').value
+        const res = await fetch(`/professor/reject/${id}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            remarks,
+            signature,
+          }),
+        })
+        const data = await res.json()
+        if (!data.success) {
+          Swal.fire({
+            title: 'Error',
+            text: data.message,
+            icon: 'error',
+          })
+          return
+        }
+        Swal.fire({
+          title: 'Rejected!',
+          text: data.message,
+          icon: 'success',
+        }).then(() => location.reload())
+      }
     </script>
   </body>
 </html>

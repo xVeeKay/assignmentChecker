@@ -155,6 +155,10 @@
         background: #dbeafe;
         color: #1e40af;
       }
+      .status-forwarded {
+        background: #f3e8ff; /* light violet */
+        color: #6b21a8; /* dark purple */
+      }
 
       .actions {
         display: flex;
@@ -308,7 +312,6 @@
         >
       </div>
 
-
       <div class="panel">
         <% if (Array.isArray(assignments) && assignments.length > 0) { %>
         <div class="table-wrapper">
@@ -327,7 +330,9 @@
               <tr>
                 <td class="assignment-col"><%= assignment.title %></td>
                 <td class="student-col"><%= assignment.student.name %></td>
-                <td class="submitted-col"><%= assignment.submittedAt.toLocaleDateString("en-IN") %></td>
+                <td class="submitted-col">
+                  <%= assignment.submittedAt.toLocaleDateString("en-IN") %>
+                </td>
                 <td>
                   <% var status = (assignment.status ||
                   'submitted').toLowerCase(); var statusClass = 'status-' +

@@ -8,8 +8,8 @@ const crypto=require('crypto')
 const dashboard=async(req,res)=>{
     try {
         const user=await User.findOne({email:req.user.email})
-        const assignments=await Assignment.find({faculty:user._id,status:'submitted'}).populate('student')
-        const pendingCount=await Assignment.countDocuments({faculty:user._id,status:'submitted'})
+        const assignments=await Assignment.find({faculty:user._id,status:{$in:['submitted','forwarded']}}).populate('student')
+        const pendingCount=await Assignment.countDocuments({faculty:user._id,status:{$in:['submitted','forwarded']}})
         const approvedCount=await Assignment.countDocuments({faculty:user._id,status:'approved'})
         const rejectedCount=await Assignment.countDocuments({faculty:user._id,status:'rejected'})
         const totalReviewed=approvedCount+rejectedCount
@@ -84,9 +84,37 @@ const rejectAssignment=async(req,res)=>{
     }
 }
 
+const forwardAssignment=async(req,res)=>{
+    try {
+            const {forwardMessage,assignmentId,forwardToFacultyId}=req.body
+            const assignment=await Assignment.findById(assignmentId)
+            if(!assignment){
+                return res.json({success:false,message:"Assignment not found!"})
+            }
+            const user=await User.findOne({email:req.user.email})
+            if(!user){
+                return res.json({success:false,message:"User not found!"})
+            }
+            assignment.history.push({
+                action:'forwarded',
+                filePath:assignment.filePath,
+                remarks:forwardMessage,
+                user:user._id,
+            })
+            assignment.status='forwarded'
+            assignment.faculty=forwardToFacultyId
+            await assignment.save()
+            res.json({success:true,message:"Assignment Forwarded successfully!"})
+    } catch (error) {
+        console.log(error)
+        res.json({success:false,message:"Error while forwarding the assignment"})
+    }
+}
+
 
 module.exports = {
   dashboard,
   approveAssignment,
-  rejectAssignment
+  rejectAssignment,
+  forwardAssignment,
 }
