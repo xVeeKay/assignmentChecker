@@ -1,12 +1,17 @@
-const jwt=require('jsonwebtoken')
+const jwt=require('jsonwebtoken');
+const { User } = require('../../models/schemas/user.model');
 
-const authStudent=(req,res,next)=>{
+const authStudent=async(req,res,next)=>{
     const token=req.cookies.token;
         if(!token){
             return res.status(400).redirect('/')
         }
         try {
             const decoded=jwt.verify(token,process.env.JWT_SECRET)
+            const user=await User.findOne({email:decoded.email})
+            if(user.lastLogoutAll&&decoded.iat*1000<user.lastLogoutAll.getTime()){
+                return res.redirect('/')
+            }
             if(decoded.role!=='student'){
                 return res.status(400).redirect('/')
             }

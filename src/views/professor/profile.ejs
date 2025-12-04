@@ -238,21 +238,21 @@
       </div>
 
       <div class="stats-box">
-        <h3>Total Submitted Assignments: <%= submittedCount %></h3>
+        <h3>Total Reviewed Assignments: <%= reviewedCount%></h3>
       </div>
 
       <div class="btns">
-        <a href="/student/dashboard" class="btn btn-primary"
+        <a href="/professor/dashboard" class="btn btn-primary"
           >Back to Dashboard</a
         >
         <button id="changePasswordBtn" class="btn btn-primary">
           Change Password
         </button>
-        <form action="/student/logout" method="POST">
+        <form action="/professor/logout" method="POST">
           <button class="btn btn-danger" type="submit">Logout</button>
         </form>
         <a
-          href="/student/logout-all"
+          href="/professor/logout-all"
           class="btn btn-secondary"
           title="Logout from all devices"
           >Logout from all devices</a
@@ -264,7 +264,11 @@
     <div id="passwordModal" class="modal">
       <div class="modal-content">
         <div class="modal-header">Change Password</div>
-        <form id="passwordForm" action="/student/change-password" method="post">
+        <form
+          id="passwordForm"
+          action="/professor/change-password"
+          method="post"
+        >
           <div class="form-group">
             <label for="oldPassword">Current Password</label>
             <input

@@ -33,6 +33,13 @@ router.route('/profile').get(authStudent,async(req,res)=>{
     const submittedCount=await Assignment.countDocuments({student:user._id,status:'submitted'})
     res.render('student/profile',{user,submittedCount})
 })
+router.route('/logout-all').get(authStudent,async(req,res)=>{
+  const user=await User.findOne({email:req.user.email})
+  user.lastLogoutAll=Date.now()
+  await user.save()
+  res.clearCookie('token')
+  return res.redirect('/')
+})
 router.route('/change-password').post(authStudent,changePassword)
 router.route('/assignments/upload').get(authStudent,async(req,res)=>{
     const student=await User.findOne({email:req.user.email})

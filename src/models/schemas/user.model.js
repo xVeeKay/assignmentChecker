@@ -40,7 +40,11 @@ const userSchema=new mongoose.Schema({
     avatar:{
         type:String,
         default:"https://avatar.iran.liara.run/public/19"
-    }
+    },
+    lastLogoutAll:{
+        type:Date,
+        default:null
+    },
 },{timestamps:true})
 
 const User=mongoose.model("User",userSchema)

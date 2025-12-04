@@ -111,10 +111,45 @@ const forwardAssignment=async(req,res)=>{
     }
 }
 
+const logout=async(req,res)=>{
+    try {
+        res.clearCookie('token')
+        res.redirect('/')
+    } catch (error) {
+        console.log("Error while logging out ",error)
+        res.redirect('/professor/dashboard')
+    }
+}
+
+const changePassword=async(req,res)=>{
+    try {
+        const {oldPassword,newPassword,confirmPassword}=req.body
+        const user=await User.findOne({email:req.user.email}).populate('department')
+        const reviewedCount=await Assignment.countDocuments({faculty:user._id,status:{$in:['rejected','approved']}})
+        const ok=await bcrypt.compare(oldPassword,user.password)
+        if(!ok){
+            return res.render('professor/profile',{error:"Incorrect password!",user,reviewedCount})
+        }
+        if(newPassword!==confirmPassword){
+            return res.render('professor/profile',{error:"New password does not match with confirm password!",user,reviewedCount})
+        }
+        user.password=await bcrypt.hash(newPassword,10)
+        await user.save()
+        res.render('professor/profile',{success:"Password changed successfully!",user,reviewedCount})
+    } catch (error) {
+        console.log("Error while changing the password ,",error)
+        const user=await User.findOne({email:req.user.email}).populate('department')
+        const reviewedCount=await Assignment.countDocuments({faculty:user._id,status:{$in:['rejected','approved']}})
+        return res.render('professor/profile',{error:"Error while changing the password",user,reviewedCount})
+    }
+}
+
 
 module.exports = {
   dashboard,
   approveAssignment,
   rejectAssignment,
   forwardAssignment,
+  logout,
+  changePassword
 }
