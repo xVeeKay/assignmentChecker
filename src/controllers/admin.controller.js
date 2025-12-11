@@ -186,6 +186,7 @@ const createUser = async (req, res) => {
       // await sendWelcomeEmail(email, name, plainPassword)
       let ack = await sendWelcomeEmail(email,name,plainPassword)
       if(!ack){
+        console.log(ack)
         res.render('admin/createUser',{error:"Error while sending email to user",departments})
       }
     }
