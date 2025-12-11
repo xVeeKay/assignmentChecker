@@ -3,301 +3,449 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Assignment Details</title>
+    <title>Assignment Details - AssignmentChecker</title>
     <style>
+      :root {
+        --radius: 0.65rem;
+        --background: oklch(1 0 0);
+        --foreground: oklch(0.141 0.005 285.823);
+        --card: oklch(1 0 0);
+        --card-foreground: oklch(0.141 0.005 285.823);
+        --primary: oklch(0.541 0.281 293.009);
+        --primary-foreground: oklch(0.969 0.016 293.756);
+        --secondary: oklch(0.967 0.001 286.375);
+        --secondary-foreground: oklch(0.21 0.006 285.885);
+        --muted: oklch(0.967 0.001 286.375);
+        --muted-foreground: oklch(0.552 0.016 285.938);
+        --destructive: oklch(0.577 0.245 27.325);
+        --border: oklch(0.92 0.004 286.32);
+        --chart-2: oklch(0.606 0.25 292.717);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
       body {
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-          Arial;
-        background: #f6fbf7;
-        color: #1f2937;
-        margin: 0;
-        padding: 24px;
+          Oxygen, Ubuntu, Cantarell, sans-serif;
+        background: var(--background);
+        color: var(--foreground);
+        line-height: 1.6;
       }
-      .page {
-        max-width: 1100px;
+
+      .container {
+        max-width: 900px;
         margin: 0 auto;
+        padding: 40px 32px;
       }
-      .back-row {
+
+      .back-link {
+        display: inline-block;
+        margin-bottom: 24px;
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.2s ease;
+      }
+
+      .back-link:hover {
+        color: var(--chart-2);
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 32px;
+        gap: 20px;
+      }
+
+      .header h1 {
+        font-size: 32px;
+        font-weight: 700;
+        color: var(--foreground);
+        margin: 0;
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 8px 16px;
+        background: var(--chart-2);
+        color: white;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .details-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 32px;
+      }
+
+      .info-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 20px;
+      }
+
+      .info-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--muted-foreground);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 6px;
+      }
+
+      .info-value {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--foreground);
+      }
+
+      .section {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 24px;
+        margin-bottom: 20px;
+      }
+
+      .section-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--foreground);
+        margin-bottom: 16px;
         display: flex;
         align-items: center;
-        gap: 12px;
-        margin-bottom: 18px;
+        gap: 8px;
       }
-      .btn-back {
-        background: #fff;
-        border: 1px solid #e6e6e6;
-        padding: 8px 12px;
-        border-radius: 8px;
-        color: #0f766e;
-        cursor: pointer;
-        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03);
-        text-decoration: none;
+
+      .section-title::before {
+        content: '';
+        width: 3px;
+        height: 20px;
+        background: var(--primary);
+        border-radius: 1px;
       }
-      .layout {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 18px;
-      }
-      .card {
-        background: #ffffff;
-        padding: 22px;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(16, 24, 40, 0.04);
-        border: 1px solid rgba(0, 0, 0, 0.03);
-      }
-      .title {
-        font-size: 20px;
-        font-weight: 700;
-        margin: 0 0 8px 0;
-      }
-      .meta {
-        color: #6b7280;
+
+      .description {
         font-size: 14px;
-        margin-bottom: 14px;
+        line-height: 1.8;
+        color: var(--foreground);
+        white-space: pre-wrap;
+        word-break: break-word;
       }
-      .field {
-        margin: 8px 0;
-        color: #374151;
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
       }
+
+      thead {
+        background: var(--secondary);
+        border-bottom: 2px solid var(--border);
+      }
+
+      th {
+        padding: 12px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 12px;
+        color: var(--muted-foreground);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      td {
+        padding: 12px;
+        border-bottom: 1px solid var(--border);
+        font-size: 13px;
+      }
+
+      tr:last-child td {
+        border-bottom: none;
+      }
+
+      tr:hover {
+        background: var(--secondary);
+      }
+
+      .action-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        background: var(--primary);
+        color: var(--primary-foreground);
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 600;
+      }
+
       .file-link {
-        color: #0f766e;
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s ease;
+      }
+
+      .file-link:hover {
         text-decoration: underline;
       }
-      .badge {
-        display: inline-block;
-        padding: 6px 10px;
-        border-radius: 999px;
-        font-weight: 600;
-        font-size: 13px;
-        color: white;
-      }
-      .badge.submitted {
-        background: #0ea5c9;
-      }
-      .badge.approved {
-        background: #10b981;
-      }
-      .badge.rejected {
-        background: #ef4444;
-      }
-      .badge.draft {
-        background: #6b7280;
-      }
-      /* Forwarded badge */
-      .badge.forwarded {
-        background: #f3e8ff;
-        color: #6b21a8;
-      }
-      .history {
-        margin-top: 8px;
-      }
-      .history-item {
+
+      .actions {
         display: flex;
         gap: 12px;
-        padding: 14px;
-        border-radius: 10px;
-        border: 1px solid rgba(15, 23, 42, 0.04);
-        background: linear-gradient(180deg, #fff, #fafafa);
+        margin-top: 20px;
       }
-      .history-timeline {
-        width: 28px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
-      .dot {
-        width: 12px;
-        height: 12px;
-        border-radius: 999px;
-        border: 3px solid #e6f6f3;
-        background: transparent;
-        margin-top: 4px;
-      }
-      .dot.submitted {
-        background: #0ea5c9;
-      }
-      .dot.approved {
-        background: #10b981;
-      }
-      .dot.rejected {
-        background: #ef4444;
-      }
-      .dot.forwarded {
-        background: #6b21a8;
-      }
-      .history-content {
+
+      .btn {
         flex: 1;
-      }
-      .history-title {
-        font-weight: 700;
-        color: #111827;
-      }
-      .history-meta {
-        color: #6b7280;
-        font-size: 13px;
-        margin-top: 6px;
-      }
-      .history-signature {
-        margin-top: 8px;
-        color: #065f46;
-        font-size: 13px;
+        padding: 12px 20px;
+        border-radius: var(--radius);
+        border: none;
         font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s ease;
       }
-      .reviewer {
-        border-left: 4px solid #10b981;
-        background: #ecfdf5;
-        padding: 14px;
-        border-radius: 10px;
-        margin-top: 6px;
-        color: #064e3b;
+
+      .btn-primary {
+        background: var(--primary);
+        color: var(--primary-foreground);
       }
-      @media (min-width: 900px) {
-        .layout {
-          grid-template-columns: 1fr 360px;
-        }
-        .main-col {
-          order: 1;
-        }
-        .side-col {
-          order: 2;
+
+      .btn-primary:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+      }
+
+      .btn-secondary {
+        background: var(--secondary);
+        color: var(--secondary-foreground);
+        border: 1px solid var(--border);
+      }
+
+      .btn-secondary:hover {
+        background: var(--muted);
+      }
+
+      .empty-message {
+        text-align: center;
+        padding: 20px;
+        color: var(--muted-foreground);
+        font-size: 13px;
+      }
+
+      @media (max-width: 1024px) {
+        .container {
+          max-width: 100%;
+          padding: 32px 24px;
         }
       }
-      .side-col .card {
-        position: sticky;
-        top: 26px;
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 20px 16px;
+        }
+
+        .header {
+          flex-direction: column;
+        }
+
+        .header h1 {
+          font-size: 24px;
+        }
+
+        .details-grid {
+          grid-template-columns: 1fr;
+          gap: 16px;
+        }
+
+        .actions {
+          flex-direction: column;
+        }
+
+        .btn {
+          width: 100%;
+        }
+
+        th,
+        td {
+          padding: 12px 8px;
+          font-size: 12px;
+        }
+
+        .section-title {
+          font-size: 14px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 16px 12px;
+        }
+
+        .back-link {
+          font-size: 12px;
+          margin-bottom: 16px;
+        }
+
+        .header {
+          gap: 12px;
+        }
+
+        .header h1 {
+          font-size: 20px;
+        }
+
+        .status-badge {
+          padding: 6px 12px;
+          font-size: 12px;
+        }
+
+        .info-card {
+          padding: 16px;
+        }
+
+        .info-label {
+          font-size: 10px;
+        }
+
+        .info-value {
+          font-size: 14px;
+        }
+
+        .section {
+          padding: 16px;
+          margin-bottom: 16px;
+        }
+
+        th,
+        td {
+          padding: 10px 6px;
+          font-size: 11px;
+        }
+
+        .action-badge {
+          font-size: 10px;
+          padding: 3px 6px;
+        }
+
+        .btn {
+          padding: 10px 16px;
+          font-size: 13px;
+        }
       }
     </style>
   </head>
-
   <body>
-    <div class="page">
-      <div class="back-row">
-        <a href="/student/assignments" class="btn-back"
-          >← Back to assignments</a
+    <%- include('_sidebar') %>
+    <div class="container">
+
+      <% if (assignment) { %>
+      <div class="header">
+        <h1><%= assignment.title %></h1>
+        <% var st = (assignment.status||'draft').toString().toLowerCase(); %>
+        <span class="status-badge"
+          ><%= st.charAt(0).toUpperCase() + st.slice(1) %></span
         >
-        <h2 style="margin: 0; font-size: 18px; color: #111827">
-          Assignment Details
-        </h2>
       </div>
 
-      <div class="layout">
-        <!-- MAIN COLUMN -->
-        <div class="main-col">
-          <div class="card">
-            <% if (!assignment) { %>
-
-            <p>No assignment data available.</p>
-
-            <% } else { %> <% var fileName = assignment.filePath ?
-            assignment.filePath.split(/[\\/]/).pop() : ''; %>
-
-            <h3 class="title">
-              <%= assignment.title || 'Untitled Assignment' %>
-            </h3>
-
-            <div class="meta">
-              Category:
-              <strong><%= assignment.category || 'Assignment' %></strong>
-            </div>
-
-            <div class="field">
-              <strong>Description:</strong>
-              <div style="margin-top: 6px; color: #374151">
-                <%= assignment.description || 'No description provided.' %>
-              </div>
-            </div>
-
-            <% if (assignment.filePath) { %>
-            <div class="field">
-              <strong>File:</strong>
-              <div style="margin-top: 6px">
-                <a
-                  class="file-link"
-                  href="/student/assignments/<%= assignment._id %>/download"
-                >
-                  <%= fileName %>
-                </a>
-              </div>
-            </div>
-
-            <div
-              style="
-                margin-top: 12px;
-                display: flex;
-                align-items: center;
-                gap: 12px;
-              "
-            >
-              <div>Current Status:</div>
-              <% var st = (assignment.status || 'draft').toLowerCase(); %>
-              <div class="badge <%= st %>">
-                <%= (assignment.status || 'Draft').charAt(0).toUpperCase() +
-                (assignment.status || 'Draft').slice(1) %>
-              </div>
-            </div>
-            <% } %> <% } %>
-          </div>
-
-          <!-- HISTORY -->
-          <% if (typeof history !== 'undefined' && Array.isArray(history) &&
-          history.length) { %>
-          <div class="card history" style="margin-top: 16px">
-            <h4 style="margin: 0 0 12px 0">Approval History</h4>
-
-            <div style="display: flex; flex-direction: column; gap: 10px">
-              <% history.forEach(function(item){ %>
-
-              <div class="history-item">
-                <div class="history-timeline">
-                  <div
-                    class="dot <%= item.type ? item.type.toLowerCase() : '' %>"
-                  ></div>
-                </div>
-
-                <div class="history-content">
-                  <div class="history-title">
-                    <%= item.action %>
-                    <span
-                      style="font-weight: 600; color: #6b7280; font-size: 13px"
-                    >
-                      by <%= item.user.name || 'Unknown' %>, <%= new
-                      Date(item.date).toLocaleDateString() %>
-                    </span>
-                  </div>
-
-                  <% if (item.remarks) { %>
-                  <div class="history-meta"><em><%= item.remarks%></em></div>
-                  <% } %> <% if (item.signature.raw) { %>
-                  <div class="history-signature">
-                    Signature: <%= item.signature.raw %>
-                  </div>
-                  <% } %>
-                </div>
-              </div>
-
-              <% }) %>
-            </div>
-          </div>
-          <% } %>
+      <div class="details-grid">
+        <div class="info-card">
+          <div class="info-label">Category</div>
+          <div class="info-value"><%= assignment.category || 'N/A' %></div>
         </div>
-
-        <!-- SIDE COLUMN -->
-        <div class="side-col">
-          <div class="card">
-            <h4 style="margin: 0 0 8px 0">Current Reviewer</h4>
-
-            <% if (assignment && assignment.faculty) { %>
-            <div class="reviewer">
-              <div style="font-weight: 700">
-                <%= assignment.faculty.name || 'Reviewer' %>
-              </div>
-            </div>
-            <% } else { %>
-            <div style="color: #6b7280">No reviewer assigned.</div>
-            <% } %>
+        <div class="info-card">
+          <div class="info-label">Faculty Reviewer</div>
+          <div class="info-value">
+            <%= (assignment.faculty && assignment.faculty.name) ?
+            assignment.faculty.name : 'Not assigned' %>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-label">Submitted Date</div>
+          <div class="info-value">
+            <%= assignment.createdAt ? new
+            Date(assignment.createdAt).toLocaleDateString() : 'N/A' %>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-label">Last Updated</div>
+          <div class="info-value">
+            <%= assignment.updatedAt ? new
+            Date(assignment.updatedAt).toLocaleDateString() : 'N/A' %>
           </div>
         </div>
       </div>
+
+      <div class="section">
+        <h2 class="section-title">Description</h2>
+        <div class="description">
+          <%= assignment.description || 'No description provided' %>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">Review History</h2>
+        <% if (Array.isArray(history) && history.length > 0) { %>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Action</th>
+              <th>By</th>
+              <th>Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% history.forEach(function(h){ %>
+            <tr>
+              <td>
+                <%= h.date ? new Date(h.date).toLocaleDateString() : 'N/A' %>
+              </td>
+              <td><span class="action-badge"><%= h.action %></span></td>
+              <td><%= (h.user && h.user.name) ? h.user.name : 'N/A' %></td>
+              <td><%= h.remarks || '-' %></td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+        <% } else { %>
+        <div class="empty-message">No review history yet</div>
+        <% } %>
+      </div>
+
+      <div class="actions">
+        <% if (assignment.status === 'draft') { %>
+        <form
+          method="POST"
+          action="/student/assignments/<%= assignment._id %>/submit"
+          style="flex: 1"
+        >
+          <button type="submit" class="btn btn-primary" style="width: 100%">
+            Submit for Review
+          </button>
+        </form>
+        <% } %> <% if (assignment.status === 'rejected') { %>
+        <a
+          href="/student/assignments/<%= assignment._id %>/resubmit"
+          class="btn btn-primary"
+          style="text-decoration: none"
+          >Resubmit Assignment</a
+        >
+        <% } %>
+      </div>
+      <% } else { %>
+      <div class="empty-message">Assignment not found</div>
+      <% } %>
     </div>
   </body>
 </html>

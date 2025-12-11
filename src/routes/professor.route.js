@@ -43,7 +43,7 @@ router.route('/reviews').get(authProfessor,async(req,res)=>{
         faculty: user._id,
         status: { $in: ["rejected", "approved"] }
     }).populate('student');
-    res.render('professor/reviews',{assignments})
+    res.render('hod/reviews',{assignments})
 })
 router.route('/forward-assignment').post(authProfessor,forwardAssignment)
 

@@ -1,251 +1,427 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Resubmit Assignment</title>
+    <title>Resubmit Assignment - AssignmentChecker</title>
     <style>
+      :root {
+        --radius: 0.65rem;
+        --background: oklch(1 0 0);
+        --foreground: oklch(0.141 0.005 285.823);
+        --card: oklch(1 0 0);
+        --card-foreground: oklch(0.141 0.005 285.823);
+        --primary: oklch(0.541 0.281 293.009);
+        --primary-foreground: oklch(0.969 0.016 293.756);
+        --secondary: oklch(0.967 0.001 286.375);
+        --secondary-foreground: oklch(0.21 0.006 285.885);
+        --muted: oklch(0.967 0.001 286.375);
+        --muted-foreground: oklch(0.552 0.016 285.938);
+        --destructive: oklch(0.577 0.245 27.325);
+        --border: oklch(0.92 0.004 286.32);
+        --input: oklch(0.92 0.004 286.32);
+        --chart-5: oklch(0.432 0.232 292.759);
+      }
+
       * {
+        margin: 0;
+        padding: 0;
         box-sizing: border-box;
       }
+
       body {
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-          'Helvetica Neue', Arial, sans-serif;
-        background: linear-gradient(135deg, #f0faf8 0%, #f6fbf7 100%);
-        color: #1f2937;
-        margin: 0;
-        padding: 28px 20px;
-        min-height: 100vh;
+          Oxygen, Ubuntu, Cantarell, sans-serif;
+        background: var(--background);
+        color: var(--foreground);
+        line-height: 1.6;
       }
-      .page {
-        max-width: 720px;
+
+      .container {
+        max-width: 700px;
         margin: 0 auto;
+        padding: 40px 32px;
       }
-      .header {
+
+      .page-header {
         display: flex;
+        justify-content: space-between;
         align-items: center;
-        gap: 12px;
-        margin-bottom: 24px;
+        margin-bottom: 40px;
+        gap: 20px;
       }
-      .btn-back {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        background: none;
-        border: none;
-        color: var(--primary, #0f766e);
+
+      .page-header h1 {
+        font-size: 32px;
         font-weight: 700;
-        font-size: 14px;
-        cursor: pointer;
-        text-decoration: none;
-        padding: 0;
-      }
-      .btn-back:hover {
-        text-decoration: underline;
-      }
-      h1 {
+        color: var(--foreground);
         margin: 0;
-        font-size: 24px;
-        font-weight: 700;
-        color: #111827;
       }
-      .card {
-        background: #ffffff;
-        border: 1px solid rgba(0, 0, 0, 0.05);
-        padding: 24px;
-        border-radius: 12px;
-        box-shadow: 0 2px 12px rgba(16, 24, 40, 0.06);
-      }
-      .section {
-        margin-bottom: 20px;
-      }
-      .section:last-child {
-        margin-bottom: 0;
-      }
-      .section-title {
-        font-weight: 700;
-        font-size: 13px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        color: #6b7280;
-        margin-bottom: 10px;
-      }
-      .current-file {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 12px;
-        background: #f9fafb;
-        border-radius: 8px;
-        border: 1px solid #e5e7eb;
-      }
-      .file-link {
-        color: var(--primary, #0f766e);
+
+      .back-link {
+        color: var(--primary);
         text-decoration: none;
         font-weight: 600;
-        word-break: break-all;
-      }
-      .file-link:hover {
-        text-decoration: underline;
-      }
-      .remarks-box {
-        background: linear-gradient(135deg, #fef3f2 0%, #ffe4e1 100%);
-        border-left: 4px solid #ef4444;
-        padding: 14px;
-        border-radius: 8px;
-        color: #7f1d1d;
-        line-height: 1.5;
         font-size: 14px;
+        transition: all 0.2s ease;
       }
-      label {
-        display: block;
-        font-weight: 700;
-        font-size: 14px;
+
+      .back-link:hover {
+        color: var(--chart-5);
+      }
+
+      .alert {
+        background: var(--chart-5);
+        border: 1px solid var(--chart-5);
+        border-radius: var(--radius);
+        padding: 16px;
+        margin-bottom: 24px;
+        color: var(--foreground);
+      }
+
+      .alert-title {
+        font-weight: 600;
         margin-bottom: 8px;
-        color: #111827;
       }
+
+      .alert-message {
+        font-size: 14px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      .form-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 32px;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 24px;
+      }
+
+      label {
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--foreground);
+        margin-bottom: 8px;
+        display: block;
+      }
+
+      .form-hint {
+        font-size: 12px;
+        color: var(--muted-foreground);
+        margin-top: 4px;
+      }
+
       textarea,
       input[type='file'] {
         width: 100%;
-        padding: 10px 12px;
-        border-radius: 8px;
-        border: 1px solid #d1d5db;
-        background: #f9fafb;
-        color: #111827;
-        font-family: inherit;
+        padding: 12px 16px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
         font-size: 14px;
+        background: var(--card);
+        color: var(--foreground);
+        font-family: inherit;
+        transition: all 0.2s ease;
       }
-      textarea {
-        min-height: 120px;
-        resize: vertical;
+
+      textarea::placeholder,
+      input[type='file']::placeholder {
+        color: var(--muted-foreground);
       }
+
       textarea:focus,
       input[type='file']:focus {
         outline: none;
-        border-color: var(--primary, #0f766e);
-        background: #fff;
-        box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.08);
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(84, 28, 145, 0.1);
       }
+
+      textarea {
+        min-height: 100px;
+        resize: vertical;
+      }
+
+      .file-input-wrapper {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .file-input-label {
+        display: inline-block;
+        padding: 12px 16px;
+        background: var(--secondary);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--secondary-foreground);
+        transition: all 0.2s ease;
+        text-align: center;
+      }
+
+      .file-input-label:hover {
+        background: var(--muted);
+      }
+
       input[type='file'] {
-        padding: 8px;
+        display: none;
       }
-      .form-row {
-        margin-bottom: 16px;
+
+      .file-name {
+        display: block;
+        font-size: 13px;
+        color: var(--muted-foreground);
+        margin-top: 8px;
       }
-      .form-row:last-child {
-        margin-bottom: 0;
-      }
-      .actions {
+
+      .form-actions {
         display: flex;
-        gap: 10px;
-        align-items: center;
-        margin-top: 20px;
-        padding-top: 16px;
-        border-top: 1px solid #e5e7eb;
+        gap: 12px;
+        margin-top: 32px;
       }
+
       .btn {
-        padding: 10px 16px;
-        border-radius: 8px;
-        font-weight: 700;
+        flex: 1;
+        padding: 12px 24px;
+        border-radius: var(--radius);
+        border: none;
+        font-weight: 600;
         font-size: 14px;
         cursor: pointer;
-        border: none;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
         transition: all 0.2s ease;
       }
+
       .btn-primary {
-        background: var(--primary, #0f766e);
-        color: #fff;
-        box-shadow: 0 2px 8px rgba(15, 118, 110, 0.15);
+        background: var(--primary);
+        color: var(--primary-foreground);
       }
+
       .btn-primary:hover {
-        background: #0d5f58;
-        box-shadow: 0 4px 12px rgba(15, 118, 110, 0.25);
+        opacity: 0.9;
         transform: translateY(-1px);
       }
-      .btn-cancel {
-        background: #f3f4f6;
-        color: #1f2937;
-        border: 1px solid #d1d5db;
+
+      .btn-secondary {
+        background: var(--secondary);
+        color: var(--secondary-foreground);
+        border: 1px solid var(--border);
       }
-      .btn-cancel:hover {
-        background: #e5e7eb;
+
+      .btn-secondary:hover {
+        background: var(--muted);
+      }
+
+      .required {
+        color: var(--destructive);
+        font-weight: 700;
+      }
+
+      @media (max-width: 1024px) {
+        .container {
+          max-width: 100%;
+          padding: 32px 24px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 20px 16px;
+        }
+
+        .page-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .page-header h1 {
+          font-size: 24px;
+        }
+
+        .back-link {
+          font-size: 13px;
+        }
+
+        .alert {
+          padding: 12px;
+          margin-bottom: 20px;
+        }
+
+        .alert-title {
+          font-size: 13px;
+        }
+
+        .alert-message {
+          font-size: 12px;
+        }
+
+        .form-card {
+          padding: 20px;
+        }
+
+        .form-actions {
+          flex-direction: column;
+        }
+
+        .btn {
+          width: 100%;
+        }
+
+        label {
+          font-size: 13px;
+        }
+
+        textarea,
+        input[type='file'] {
+          font-size: 16px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 16px 12px;
+        }
+
+        .page-header {
+          gap: 12px;
+        }
+
+        .page-header h1 {
+          font-size: 20px;
+        }
+
+        .back-link {
+          font-size: 12px;
+        }
+
+        .alert {
+          padding: 12px;
+          margin-bottom: 16px;
+        }
+
+        .alert-title {
+          font-size: 12px;
+          margin-bottom: 6px;
+        }
+
+        .alert-message {
+          font-size: 11px;
+          line-height: 1.5;
+        }
+
+        .form-card {
+          padding: 16px;
+        }
+
+        .form-group {
+          margin-bottom: 16px;
+        }
+
+        label {
+          font-size: 12px;
+          margin-bottom: 6px;
+        }
+
+        .form-hint {
+          font-size: 10px;
+        }
+
+        textarea {
+          min-height: 80px;
+          padding: 10px 12px;
+        }
+
+        .file-input-label {
+          padding: 10px 12px;
+          font-size: 12px;
+        }
+
+        .file-name {
+          font-size: 11px;
+        }
+
+        .btn {
+          padding: 10px 16px;
+          font-size: 13px;
+        }
       }
     </style>
   </head>
   <body>
-    <div class="page">
-      <div class="header">
-        <a href="/student/assignments" class="btn-back">← Back</a>
+    <%- include('_sidebar') %>
+    <div class="container">
+      <div class="page-header">
         <h1>Resubmit Assignment</h1>
       </div>
 
-      <div class="card">
-        <% if (!assignment) { %>
-        <p style="color: #6b7280">No assignment found.</p>
-        <% } else { %> <% var fileName = assignment.filePath ?
-        assignment.filePath.split(/[\\/]/).pop() : '' %>
+      <% if (assignment) { %> <% if (remarks) { %>
+      <div class="alert">
+        <div class="alert-title">Reviewer's Feedback</div>
+        <div class="alert-message"><%= remarks %></div>
+      </div>
+      <% } %>
 
-        <!-- Current File Section -->
-        <div class="section">
-          <div class="section-title">📎 Current File</div>
-          <div class="current-file">
-            <% if (assignment.filePath) { %>
-            <a
-              class="file-link"
-              href="/student/assignments/<%= assignment._id %>/download"
-              ><%= fileName %></a
+      <div class="form-card">
+        <form method="POST" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="description"
+              >Revision Notes <span class="required">*</span></label
             >
-            <% } else { %>
-            <span style="color: #9ca3af">No file uploaded</span>
-            <% } %>
+            <textarea
+              id="description"
+              name="description"
+              placeholder="Explain what you've changed and improved..."
+              required
+            ></textarea>
+            <div class="form-hint">
+              Describe the changes you made based on the reviewer's feedback.
+            </div>
           </div>
-        </div>
 
-        <!-- Rejection Remarks Section -->
-        <% if (typeof remarks !== 'undefined' && remarks) { %>
-        <div class="section">
-          <div class="section-title">⚠️ Rejection Remarks</div>
-          <div class="remarks-box"><%= remarks %></div>
-        </div>
-        <% }else{ %>
-        <div class="section">
-            <div class="section-title">⚠️ Rejection Remarks</div>
-            <div class="remarks-box">No remarks</div>
-        </div>
-        <%}%>
-
-        <!-- Form Section -->
-        <form
-          action="/student/assignments/<%= assignment._id %>/resubmit"
-          method="POST"
-          enctype="multipart/form-data"
-        >
-          <div class="form-row">
-            <label for="description">Description</label>
-            <textarea id="description" name="description">
-<%= assignment.description || '' %></textarea
+          <div class="form-group form-full">
+            <label for="file"
+              >Upload Revised File <span class="required">*</span></label
             >
+            <div class="file-input-wrapper">
+              <label class="file-input-label" for="file"
+                >Choose File (PDF only)</label
+              >
+              <input type="file" id="file" name="file" accept=".pdf" required />
+              <div class="file-name">Only PDF files are allowed</div>
+            </div>
           </div>
 
-          <div class="form-row">
-            <label for="file">Upload New File (Optional)</label>
-            <input id="file" name="file" type="file" />
-          </div>
-
-          <div class="actions">
+          <div class="form-actions">
+            <a href="/student/assignments" class="btn btn-secondary">Cancel</a>
             <button type="submit" class="btn btn-primary">
-              Submit Resubmission
+              Resubmit Assignment
             </button>
-            <a href="/student/assignments" class="btn btn-cancel">Cancel</a>
           </div>
         </form>
-        <% } %>
       </div>
+      <% } else { %>
+      <div class="form-card">
+        <p style="text-align: center; color: var(--muted-foreground)">
+          Assignment not found
+        </p>
+      </div>
+      <% } %>
     </div>
+
+    <script>
+      document.getElementById('file').addEventListener('change', function (e) {
+        const fileName = document.querySelector('.file-name')
+        if (e.target.files.length > 0) {
+          fileName.textContent = e.target.files[0].name
+        }
+      })
+    </script>
   </body>
 </html>

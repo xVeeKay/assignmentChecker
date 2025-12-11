@@ -2,410 +2,530 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Student Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard - AssignmentChecker</title>
     <style>
       :root {
-        --primary: #14919b;
-        --bg: #f6f8f9;
-        --card: #ffffff;
-        --border: #e6e9eb;
-        --approved: #16a34a; /* green */
-        --rejected: #dc2626; /* red */
-        --pending: #f59e0b; /* yellow */
-        --draft: #6b7280; /* gray */
-        --forwarded-bg: #f3e8ff; /* light violet */
-        --forwarded-color: #6b21a8; /* dark purple */
+        --radius: 0.65rem;
+        --background: oklch(1 0 0);
+        --foreground: oklch(0.141 0.005 285.823);
+        --card: oklch(1 0 0);
+        --card-foreground: oklch(0.141 0.005 285.823);
+        --primary: oklch(0.541 0.281 293.009);
+        --primary-foreground: oklch(0.969 0.016 293.756);
+        --secondary: oklch(0.967 0.001 286.375);
+        --secondary-foreground: oklch(0.21 0.006 285.885);
+        --muted: oklch(0.967 0.001 286.375);
+        --muted-foreground: oklch(0.552 0.016 285.938);
+        --accent: oklch(0.967 0.001 286.375);
+        --accent-foreground: oklch(0.21 0.006 285.885);
+        --destructive: oklch(0.577 0.245 27.325);
+        --border: oklch(0.92 0.004 286.32);
+        --input: oklch(0.92 0.004 286.32);
+        --chart-1: oklch(0.811 0.111 293.571);
+        --chart-2: oklch(0.606 0.25 292.717);
+        --chart-3: oklch(0.541 0.281 293.009);
+        --chart-4: oklch(0.491 0.27 292.581);
+        --chart-5: oklch(0.432 0.232 292.759);
       }
 
       * {
+        margin: 0;
+        padding: 0;
         box-sizing: border-box;
       }
+      /* Hide toggle button on desktop */
       body {
-        font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica,
-          Arial, sans-serif;
-        background: var(--bg);
-        color: #0f172a;
-        margin: 0;
-        padding: 2rem;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          Oxygen, Ubuntu, Cantarell, sans-serif;
+        background: var(--background);
+        color: var(--foreground);
+        line-height: 1.6;
       }
 
       .container {
-        max-width: 1100px;
+        max-width: 1400px;
         margin: 0 auto;
-      }
-      .top {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
-        margin-bottom: 1.25rem;
-      }
-      h1 {
-        font-size: 1.6rem;
-        margin: 0;
-        color: #0f172a;
+        padding: 40px 32px;
       }
 
-      .controls {
+      .page-header {
         display: flex;
-        gap: 0.75rem;
+        justify-content: space-between;
         align-items: center;
+        margin-bottom: 40px;
+        gap: 20px;
       }
-      .user-menu {
-        position: relative;
-      }
-      .avatar-btn {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        border: 1px solid var(--border);
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        background: var(--card);
-        cursor: pointer;
-        padding: 0;
-        overflow: hidden;
-      }
-      .avatar-btn img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-      }
-      .avatar-initials {
+
+      .page-header h1 {
+        font-size: 32px;
         font-weight: 700;
-        color: var(--primary);
+        color: var(--foreground);
+        margin: 0;
       }
-      .dropdown {
-        position: absolute;
-        right: 0;
-        top: calc(100% + 8px);
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
-        min-width: 160px;
-        z-index: 50;
-        display: none;
+
+      .header-actions {
+        display: flex;
+        gap: 12px;
+        align-items: center;
       }
-      .dropdown.open {
-        display: block;
-      }
-      .dropdown-item {
-        display: block;
-        padding: 10px 12px;
-        color: #0f172a;
-        text-decoration: none;
-        font-weight: 600;
-      }
-      .dropdown-item:hover {
-        background: #f3f4f6;
-      }
-      .dropdown-item.logout {
-        width: 100%;
-        text-align: left;
-        border: none;
-        background: none;
-        cursor: pointer;
-      }
+
       .btn {
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
-        padding: 0.6rem 0.9rem;
-        border-radius: 8px;
+        gap: 8px;
+        padding: 10px 20px;
+        border-radius: var(--radius);
         border: none;
-        cursor: pointer;
         font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
       }
+
       .btn-primary {
         background: var(--primary);
-        color: #fff;
-        box-shadow: 0 6px 18px rgba(20, 145, 155, 0.12);
-      }
-      .btn-outline {
-        background: var(--card);
-        border: 1px solid var(--border);
-        color: var(--primary);
+        color: var(--primary-foreground);
       }
 
-      /* cards grid */
-      .cards {
+      .btn-primary:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+      }
+
+      .btn-secondary {
+        background: var(--secondary);
+        color: var(--secondary-foreground);
+        border: 1px solid var(--border);
+      }
+
+      .btn-secondary:hover {
+        background: var(--accent);
+      }
+
+      .stats-grid {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-      }
-      .card {
-        background: var(--card);
-        border-radius: 10px;
-        padding: 1rem;
-        border: 1px solid var(--border);
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-      }
-      .card .label {
-        font-size: 0.85rem;
-        color: #475569;
-        margin-bottom: 0.25rem;
-      }
-      .card .value {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #0f172a;
-      }
-      .card .muted {
-        font-size: 0.85rem;
-        color: #6b7280;
-        margin-top: 0.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
       }
 
-      /* recent submissions */
-      .panel {
+      .stat-card {
         background: var(--card);
-        border-radius: 10px;
-        padding: 1rem;
         border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 24px;
+        transition: all 0.2s ease;
       }
-      .panel h2 {
-        margin: 0 0 0.75rem 0;
-        font-size: 1.05rem;
+
+      .stat-card:hover {
+        border-color: var(--primary);
+        box-shadow: 0 4px 12px rgba(84, 28, 145, 0.1);
+      }
+
+      .stat-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--muted-foreground);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+      }
+
+      .stat-value {
+        font-size: 40px;
+        font-weight: 800;
+        color: var(--foreground);
+        line-height: 1;
+        margin-bottom: 12px;
+      }
+
+      .stat-change {
+        font-size: 12px;
+        color: var(--muted-foreground);
+      }
+
+      .section {
+        margin-bottom: 40px;
+      }
+
+      .section-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--foreground);
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .section-title::before {
+        content: '';
+        width: 4px;
+        height: 24px;
+        background: var(--primary);
+        border-radius: 2px;
+      }
+
+      .table-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
       }
 
       table {
         width: 100%;
         border-collapse: collapse;
       }
-      th,
-      td {
-        padding: 0.75rem;
-        text-align: left;
-        border-bottom: 1px dashed var(--border);
-        font-size: 0.95rem;
+
+      thead {
+        background: var(--secondary);
+        border-bottom: 2px solid var(--border);
       }
+
       th {
-        font-weight: 700;
-        color: #475569;
-        background: transparent;
+        padding: 16px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 13px;
+        color: var(--muted-foreground);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
       }
 
-      .status {
+      td {
+        padding: 16px;
+        border-bottom: 1px solid var(--border);
+        font-size: 14px;
+      }
+
+      tr:last-child td {
+        border-bottom: none;
+      }
+
+      tr:hover {
+        background: var(--muted);
+      }
+
+      .status-badge {
         display: inline-block;
-        padding: 0.25rem 0.5rem;
-        border-radius: 999px;
-        color: #ffffff;
-        font-weight: 700;
-        font-size: 0.8rem;
-      }
-      .status.approved {
-        background: var(--approved);
-      }
-      .status.rejected {
-        background: var(--rejected);
-      }
-      .status.submitted {
-        background: var(--pending);
-      }
-      .status.draft {
-        background: var(--draft);
-      }
-      .status.forwarded {
-        background: var(--forwarded-bg);
-        color: var(--forwarded-color);
-      }
-
-      .empty {
-        padding: 1rem;
-        color: #6b7280;
-      }
-
-      .panel-footer {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 1rem;
-      }
-      .link {
-        color: var(--primary);
-        text-decoration: none;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
         font-weight: 600;
       }
 
-      @media (max-width: 900px) {
-        .cards {
-          grid-template-columns: repeat(2, 1fr);
+      .status-draft {
+        background: var(--chart-5);
+        color: var(--foreground);
+      }
+
+      .status-submitted {
+        background: var(--chart-4);
+        color: white;
+      }
+
+      .status-approved {
+        background: var(--chart-2);
+        color: white;
+      }
+
+      .status-rejected {
+        background: var(--destructive);
+        color: white;
+      }
+
+      .status-forwarded {
+        background: var(--chart-1);
+        color: var(--foreground);
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: var(--secondary);
+        border-radius: var(--radius);
+        border: 1px dashed var(--border);
+      }
+
+      .empty-state-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+        opacity: 0.5;
+      }
+
+      .empty-state-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--foreground);
+        margin-bottom: 8px;
+      }
+
+      .empty-state-text {
+        font-size: 14px;
+        color: var(--muted-foreground);
+        margin-bottom: 20px;
+      }
+
+      .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-foreground);
+        font-weight: 700;
+        font-size: 14px;
+        overflow: hidden;
+      }
+
+      .avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .profile-info {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .profile-name {
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--foreground);
+      }
+
+      .profile-email {
+        font-size: 12px;
+        color: var(--muted-foreground);
+      }
+
+      .view-link {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.2s ease;
+      }
+
+      .view-link:hover {
+        color: var(--chart-3);
+        text-decoration: underline;
+      }
+
+      @media (max-width: 1024px) {
+        .container {
+          max-width: 100%;
+          padding: 32px 24px;
+        }
+
+        .stats-grid {
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         }
       }
-      @media (max-width: 560px) {
-        body {
-          padding: 1rem;
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 20px 16px;
         }
-        .cards {
-          grid-template-columns: 1fr;
-        }
-        .top {
+
+        .page-header {
           flex-direction: column;
           align-items: flex-start;
+          margin-bottom: 20px;
         }
-        .controls {
+
+        .page-header h1 {
+          font-size: 24px;
+        }
+
+        .header-actions {
           width: 100%;
-          justify-content: space-between;
+          flex-direction: column;
+        }
+
+        .btn {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .stats-grid {
+          grid-template-columns: 1fr 1fr;
+          gap: 16px;
+          margin-bottom: 20px;
+        }
+
+        .stat-card {
+          padding: 16px;
+        }
+
+        .stat-value {
+          font-size: 32px;
+        }
+
+        th,
+        td {
+          padding: 12px 8px;
+          font-size: 12px;
+        }
+
+        .section-title {
+          font-size: 16px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 16px 12px;
+        }
+
+        .page-header h1 {
+          font-size: 20px;
+        }
+
+        .stats-grid {
+          grid-template-columns: 1fr;
+          gap: 12px;
+        }
+
+        .stat-card {
+          padding: 12px;
+        }
+
+        .stat-value {
+          font-size: 28px;
+        }
+
+        .stat-label {
+          font-size: 11px;
+        }
+
+        .section-title {
+          font-size: 16px;
+        }
+
+        th,
+        td {
+          padding: 10px 6px;
+          font-size: 11px;
+        }
+
+        .btn {
+          padding: 10px 16px;
+          font-size: 13px;
         }
       }
     </style>
   </head>
   <body>
+
+<%- include('_sidebar') %>
+
     <div class="container">
-      <div class="top">
-        <h1>Assignment Submissions</h1>
-        <div class="controls">
-          <a class="btn btn-outline" href="/student/assignments"
-            >View all assignments</a
-          >
-          <a class="btn btn-primary" href="/student/assignments/upload"
-            >Upload New Assignment</a
-          >
-          <div class="user-menu">
-            <button id="userBtn" class="avatar-btn" aria-expanded="false">
-              <% if (typeof user !== 'undefined' && user && user.avatar) { %>
-              <img src="<%= user.avatar %>" alt="Avatar" />
-              <% } %>
-            </button>
+      <div class="page-header">
+        <h1>Dashboard</h1>
+      </div>
 
-            <div id="userDropdown" class="dropdown" role="menu">
-              <a class="dropdown-item" href="/student/profile">Profile</a>
-              <form action="/student/logout" method="POST" style="margin: 0">
-                <button type="submit" class="dropdown-item logout">
-                  Logout
-                </button>
-              </form>
-            </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Draft</div>
+          <div class="stat-value">
+            <%= typeof draftCount !== 'undefined' ? draftCount : 0 %>
           </div>
+          <div class="stat-change">Not submitted yet</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">Submitted</div>
+          <div class="stat-value">
+            <%= typeof submittedCount !== 'undefined' ? submittedCount : 0 %>
+          </div>
+          <div class="stat-change">Awaiting review</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">Approved</div>
+          <div class="stat-value">
+            <%= typeof approvedCount !== 'undefined' ? approvedCount : 0 %>
+          </div>
+          <div class="stat-change">Successfully completed</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">Rejected</div>
+          <div class="stat-value">
+            <%= typeof rejectedCount !== 'undefined' ? rejectedCount : 0 %>
+          </div>
+          <div class="stat-change">Needs revision</div>
         </div>
       </div>
 
-      <div class="cards">
-        <div class="card">
-          <div>
-            <div class="label">Draft</div>
-            <div class="value">
-              <%= typeof draftCount !== 'undefined' ? draftCount : 0 %>
-            </div>
-          </div>
-          <div class="muted">Assignments you haven't submitted yet</div>
-        </div>
-
-        <div class="card">
-          <div>
-            <div class="label">Submitted</div>
-            <div class="value">
-              <%= typeof submittedCount !== 'undefined' ? submittedCount : 0 %>
-            </div>
-          </div>
-          <div class="muted">Awaiting review</div>
-        </div>
-
-        <div class="card">
-          <div>
-            <div class="label">Approved</div>
-            <div class="value">
-              <%= typeof approvedCount !== 'undefined' ? approvedCount : 0 %>
-            </div>
-          </div>
-          <div class="muted">Successfully approved</div>
-        </div>
-
-        <div class="card">
-          <div>
-            <div class="label">Rejected</div>
-            <div class="value">
-              <%= typeof rejectedCount !== 'undefined' ? rejectedCount : 0 %>
-            </div>
-          </div>
-          <div class="muted">Needs revision</div>
-        </div>
-      </div>
-
-      <div class="panel">
-        <h2>Recent submissions</h2>
+      <div class="section">
+        <h2 class="section-title">Recent Submissions</h2>
 
         <% if (Array.isArray(recentSubmissions) && recentSubmissions.length) {
         %>
-        <table>
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Course</th>
-              <th>Category</th>
-              <th>Status</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <% recentSubmissions.forEach(function(s){ %>
-            <tr>
-              <td><%= s.title %></td>
-              <td><%= s.description || '-' %></td>
-              <td><%= s.category%></td>
-              <td>
-                <% var st = (s.status||'draft').toString().toLowerCase(); %>
-                <span class="status <%= st %>"
-                  ><%= st.charAt(0).toUpperCase() + st.slice(1) %></span
-                >
-              </td>
-              <td>
-                <a class="link" href="/student/assignments/<%= s._id %>"
-                  >View</a
-                >
-              </td>
-            </tr>
-            <% }) %>
-          </tbody>
-        </table>
-        <% } else { %>
-        <div class="empty">
-          No submissions yet. Upload your first assignment to get started.
+        <div class="table-card">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 30%">Title</th>
+                <th style="width: 25%">Course</th>
+                <th style="width: 15%">Category</th>
+                <th style="width: 15%">Status</th>
+                <th style="width: 15%"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% recentSubmissions.forEach(function(s){ %>
+              <tr>
+                <td><strong><%= s.title %></strong></td>
+                <td><%= s.description || '-' %></td>
+                <td>
+                  <span style="color: var(--muted-foreground); font-size: 13px"
+                    ><%= s.category %></span
+                  >
+                </td>
+                <td>
+                  <% var st = (s.status||'draft').toString().toLowerCase(); %>
+                  <span class="status-badge status-<%= st %>">
+                    <%= st.charAt(0).toUpperCase() + st.slice(1) %>
+                  </span>
+                </td>
+                <td>
+                  <a class="view-link" href="/student/assignments/<%= s._id %>"
+                    >View</a
+                  >
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
         </div>
-        <% } %>
-
-        <div class="panel-footer">
-          <a class="link" href="/student/assignments">See all assignments</a>
+        <% } else { %>
+        <div class="empty-state">
+          <div class="empty-state-icon">📋</div>
+          <div class="empty-state-title">No Submissions Yet</div>
+          <div class="empty-state-text">
+            Upload your first assignment to get started
+          </div>
           <a class="btn btn-primary" href="/student/assignments/upload"
-            >Upload New Assignment</a
+            >Upload Assignment</a
           >
         </div>
+        <% } %>
       </div>
     </div>
-    <script>
-      ;(function () {
-        const userBtn = document.getElementById('userBtn')
-        const userDropdown = document.getElementById('userDropdown')
-        if (!userBtn || !userDropdown) return
-        userBtn.addEventListener('click', function (e) {
-          e.stopPropagation()
-          const open = userDropdown.classList.toggle('open')
-          userBtn.setAttribute('aria-expanded', open)
-        })
-
-        // close when clicking outside
-        document.addEventListener('click', function () {
-          if (userDropdown.classList.contains('open')) {
-            userDropdown.classList.remove('open')
-            userBtn.setAttribute('aria-expanded', 'false')
-          }
-        })
-
-        // close on ESC
-        document.addEventListener('keydown', function (e) {
-          if (e.key === 'Escape') {
-            userDropdown.classList.remove('open')
-            userBtn.setAttribute('aria-expanded', 'false')
-          }
-        })
-      })()
-    </script>
   </body>
 </html>

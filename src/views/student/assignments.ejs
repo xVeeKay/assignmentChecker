@@ -2,249 +2,380 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>My Assignments</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Assignments - AssignmentChecker</title>
     <style>
+      :root {
+        --radius: 0.65rem;
+        --background: oklch(1 0 0);
+        --foreground: oklch(0.141 0.005 285.823);
+        --card: oklch(1 0 0);
+        --card-foreground: oklch(0.141 0.005 285.823);
+        --primary: oklch(0.541 0.281 293.009);
+        --primary-foreground: oklch(0.969 0.016 293.756);
+        --secondary: oklch(0.967 0.001 286.375);
+        --secondary-foreground: oklch(0.21 0.006 285.885);
+        --muted: oklch(0.967 0.001 286.375);
+        --muted-foreground: oklch(0.552 0.016 285.938);
+        --destructive: oklch(0.577 0.245 27.325);
+        --border: oklch(0.92 0.004 286.32);
+        --input: oklch(0.92 0.004 286.32);
+        --chart-1: oklch(0.811 0.111 293.571);
+        --chart-2: oklch(0.606 0.25 292.717);
+        --chart-3: oklch(0.541 0.281 293.009);
+        --chart-4: oklch(0.491 0.27 292.581);
+        --chart-5: oklch(0.432 0.232 292.759);
+      }
+
       * {
+        margin: 0;
+        padding: 0;
         box-sizing: border-box;
       }
+
       body {
-        font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica,
-          Arial, sans-serif;
-        background: var(--bg);
-        color: #0f172a;
-        margin: 0;
-        padding: 2rem;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          Oxygen, Ubuntu, Cantarell, sans-serif;
+        background: var(--background);
+        color: var(--foreground);
+        line-height: 1.6;
       }
 
       .container {
-        max-width: 1200px;
+        max-width: 1400px;
         margin: 0 auto;
+        padding: 40px 32px;
       }
 
-      /* header action buttons */
-      .header-actions {
-        display: inline-flex;
-        gap: 0.5rem;
+      .page-header {
+        display: flex;
+        justify-content: space-between;
         align-items: center;
+        margin-bottom: 40px;
+        gap: 20px;
       }
-      .header-actions .btn {
-        padding: 0.55rem 0.85rem;
-        border-radius: 8px;
+
+      .page-header h1 {
+        font-size: 32px;
         font-weight: 700;
-        text-decoration: none;
+        color: var(--foreground);
+        margin: 0;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 12px;
+      }
+
+      .btn {
         display: inline-flex;
         align-items: center;
-        gap: 0.4rem;
-      }
-      .header-actions .btn-primary {
-        background: var(--primary);
-        color: #fff;
+        gap: 8px;
+        padding: 10px 20px;
+        border-radius: var(--radius);
         border: none;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
       }
-      .header-actions .btn-outline {
-        background: var(--card);
-        color: var(--primary);
+
+      .btn-primary {
+        background: var(--primary);
+        color: var(--primary-foreground);
+      }
+
+      .btn-primary:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+      }
+
+      .btn-secondary {
+        background: var(--secondary);
+        color: var(--secondary-foreground);
         border: 1px solid var(--border);
       }
 
-      .header {
+      .btn-secondary:hover {
+        background: var(--muted);
+      }
+
+      .filters {
         display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 1.5rem;
-      }
-      h1 {
-        margin: 0;
-        font-size: 1.5rem;
+        gap: 12px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
       }
 
-      .controls {
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-        margin-bottom: 1.25rem;
-      }
-
-      .filter-group {
-        display: flex;
-        gap: 0.5rem;
-        align-items: center;
-      }
-
-      .filter-group label {
-        font-weight: 600;
-        font-size: 0.9rem;
-      }
-
-      select,
-      .sort-btn {
-        padding: 0.6rem 0.75rem;
-        border-radius: 8px;
-        border: 1px solid var(--border-color);
-        font-size: 0.95rem;
+      .filter-btn {
+        padding: 8px 16px;
+        border: 1px solid var(--border);
         background: var(--card);
-        color: #0f172a;
+        border-radius: var(--radius);
+        color: var(--foreground);
+        font-size: 13px;
+        font-weight: 600;
         cursor: pointer;
+        transition: all 0.2s ease;
       }
 
-      .sort-btn {
-        background: var(--button-bg);
-        border: 1px solid var(--border-color);
+      .filter-btn:hover,
+      .filter-btn.active {
+        background: var(--primary);
+        color: var(--primary-foreground);
+        border-color: var(--primary);
+      }
+
+      .assignments-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+      }
+
+      .assignment-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 24px;
+        transition: all 0.2s ease;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .assignment-card:hover {
+        border-color: var(--primary);
+        box-shadow: 0 4px 16px rgba(84, 28, 145, 0.1);
+        transform: translateY(-2px);
+      }
+
+      .assignment-header {
+        margin-bottom: 16px;
+      }
+
+      .assignment-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--foreground);
+        margin-bottom: 4px;
+      }
+
+      .assignment-course {
+        font-size: 13px;
+        color: var(--muted-foreground);
+      }
+
+      .assignment-meta {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+      }
+
+      .meta-tag {
+        display: inline-block;
+        padding: 4px 10px;
+        background: var(--secondary);
+        color: var(--secondary-foreground);
+        border-radius: 12px;
+        font-size: 12px;
         font-weight: 600;
       }
 
-      .sort-btn:hover {
-        background: var(--button-hover);
+      .status-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 16px;
       }
 
-      /* Table view */
-      .table-wrapper {
-        background: var(--card);
-        border-radius: 10px;
-        border: 1px solid var(--border-color);
-        overflow: hidden;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-      th {
-        background: #f8fafc;
-        padding: 0.9rem;
-        text-align: left;
-        font-weight: 700;
-        color: #334155;
-        border-bottom: 1px solid var(--border-color);
-        font-size: 0.9rem;
-      }
-      td {
-        padding: 0.9rem;
-        border-bottom: 1px dashed var(--border-color);
-        font-size: 0.95rem;
-      }
-      tr:hover {
-        background: #f9fafb;
+      .status-draft {
+        background: var(--chart-5);
+        color: var(--foreground);
       }
 
-      .title-link {
+      .status-submitted {
+        background: var(--chart-4);
+        color: white;
+      }
+
+      .status-approved {
+        background: var(--chart-2);
+        color: white;
+      }
+
+      .status-rejected {
+        background: var(--destructive);
+        color: white;
+      }
+
+      .status-forwarded {
+        background: var(--chart-1);
+        color: var(--foreground);
+      }
+
+      .assignment-footer {
+        margin-top: auto;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+      }
+
+      .view-link {
         color: var(--primary);
         text-decoration: none;
         font-weight: 600;
+        font-size: 14px;
+        transition: all 0.2s ease;
       }
-      .title-link:hover {
+
+      .view-link:hover {
+        color: var(--chart-3);
         text-decoration: underline;
       }
 
-      .btn-submit {
+      .action-btn {
         display: inline-flex;
         align-items: center;
-        gap: 0.4rem;
-        padding: 0.5rem 0.9rem;
-        background: #0d9488;
-        color: #fff;
+        gap: 6px;
+        padding: 8px 14px;
+        border-radius: var(--radius);
         border: none;
-        border-radius: 6px;
-        font-weight: 700;
-        font-size: 0.9rem;
+        font-weight: 600;
+        font-size: 13px;
         cursor: pointer;
+        transition: all 0.2s ease;
         text-decoration: none;
-        box-shadow: 0 2px 4px rgba(13, 148, 136, 0.2);
+        margin-top: 12px;
       }
-      .btn-submit:hover {
-        background: #0f766e;
+
+      .action-btn-submit {
+        background: var(--primary);
+        color: var(--primary-foreground);
+      }
+
+      .action-btn-submit:hover {
+        opacity: 0.9;
         transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba(13, 148, 136, 0.3);
       }
 
-      /* Resubmit button (for rejected items) */
-      .btn-resubmit {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        padding: 0.45rem 0.85rem;
-        background: #fff;
-        color: var(--rejected, #ef4444);
-        border: 1px solid var(--rejected, #ef4444);
-        border-radius: 6px;
-        font-weight: 700;
-        font-size: 0.9rem;
-        cursor: pointer;
+      .action-btn-resubmit {
+        background: var(--chart-2);
+        color: white;
       }
-      .btn-resubmit:hover {
-        background: var(--rejected, #ef4444);
-        color: #fff;
+
+      .action-btn-resubmit:hover {
+        opacity: 0.9;
         transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba(239, 68, 68, 0.15);
       }
 
-      .badge {
-        display: inline-block;
-        padding: 0.35rem 0.7rem;
-        border-radius: 999px;
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: #000000;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-      }
-      .badge.draft {
-        background: #6b7280;
-      }
-      /* Forwarded badge */
-      .badge.forwarded {
-        background: #f3e8ff;
-        color: #6b21a8;
-        box-shadow: none;
-      }
-      .badge.submitted {
-        background: #3b82f6;
-      }
-      .badge.approved {
-        background: #10b981;
-      }
-      .badge.rejected {
-        background: #ef4444;
-      }
-
-      .reviewer {
-        color: #6b7280;
-        font-size: 0.9rem;
-      }
-
-      .empty {
+      .empty-state {
         text-align: center;
-        padding: 2rem;
-        color: #6b7280;
+        padding: 80px 20px;
+        background: var(--secondary);
+        border-radius: var(--radius);
+        border: 1px dashed var(--border);
+        grid-column: 1/-1;
       }
 
-      /* Cards view (mobile) */
-      .cards-wrapper {
-        display: none;
-        gap: 1rem;
+      .empty-state-icon {
+        font-size: 64px;
+        margin-bottom: 16px;
+        opacity: 0.5;
       }
-      .card-item {
-        background: var(--card);
-        border: 1px solid var(--border-color);
-        border-radius: 10px;
-        padding: 1rem;
-      }
-      .card-item > div {
-        margin-bottom: 0.5rem;
-      }
-      .card-label {
-        font-size: 0.8rem;
-        color: #6b7280;
+
+      .empty-state-title {
+        font-size: 20px;
         font-weight: 700;
-        text-transform: uppercase;
+        color: var(--foreground);
+        margin-bottom: 8px;
       }
 
-      /* Responsive */
-      @media (max-width: 900px) {
-        .table-wrapper {
-          display: none;
+      .empty-state-text {
+        font-size: 14px;
+        color: var(--muted-foreground);
+        margin-bottom: 24px;
+      }
+
+      @media (max-width: 1024px) {
+        .container {
+          max-width: 100%;
+          padding: 32px 24px;
         }
-        .cards-wrapper {
-          display: grid;
+
+        .assignments-grid {
+          grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        }
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 20px 16px;
+        }
+
+        .page-header {
+          flex-direction: column;
+          align-items: flex-start;
+          margin-bottom: 20px;
+        }
+
+        .page-header h1 {
+          font-size: 24px;
+        }
+
+        .header-actions {
+          width: 100%;
+          flex-direction: column;
+        }
+
+        .btn {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .assignments-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .filters {
+          flex-direction: column;
+        }
+
+        .filter-btn {
+          width: 100%;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 16px 12px;
+        }
+
+        .page-header h1 {
+          font-size: 20px;
+        }
+
+        .assignment-title {
+          font-size: 14px;
+        }
+
+        .assignment-course {
+          font-size: 12px;
+        }
+
+        .meta-tag {
+          font-size: 11px;
+          padding: 3px 8px;
+        }
+
+        .status-badge {
+          padding: 4px 10px;
+          font-size: 11px;
+        }
+
+        .view-link {
+          font-size: 13px;
         }
       }
     </style>
@@ -255,188 +386,68 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   </head>
   <body>
+    <%- include('_sidebar') %>
     <div class="container">
-      <div class="header">
+      <div class="page-header">
         <h1>My Assignments</h1>
-        <div class="header-actions">
-          <a href="/student/dashboard" class="btn btn-outline">Dashboard</a>
-          <a href="/student/assignments/upload" class="btn btn-primary"
-            >Upload New</a
-          >
-        </div>
       </div>
 
-      <!-- Error/Success Alerts -->
-      <% if (typeof error !== 'undefined' && error) { %>
-      <div
-        style="
-          background: #fff1f2;
-          color: #b91c1c;
-          padding: 0.6rem;
-          border-radius: 8px;
-          margin-bottom: 1rem;
-        "
-      >
-        <%= error %>
+      <% if (Array.isArray(assignments) && assignments.length) { %>
+      <div class="assignments-grid">
+        <% assignments.forEach(function(a){ %>
+        <div class="assignment-card">
+          <div class="assignment-header">
+            <div class="assignment-title"><%= a.title %></div>
+            <div class="assignment-course">
+              <%= a.description || 'No description' %>
+            </div>
+          </div>
+
+          <div class="assignment-meta">
+            <span class="meta-tag"><%= a.category || 'General' %></span>
+            <% if (a.faculty && a.faculty.name) { %>
+            <span class="meta-tag"><%= a.faculty.name %></span>
+            <% } %>
+          </div>
+
+          <% var st = (a.status||'draft').toString().toLowerCase(); %>
+          <span class="status-badge status-<%= st %>">
+            <%= st.charAt(0).toUpperCase() + st.slice(1) %>
+          </span>
+
+          <div class="assignment-footer">
+            <a class="view-link" href="/student/assignments/<%= a._id %>"
+              >View Details</a
+            >
+            <%if(a.status==='draft'){%>
+              <button type="submit" onclick="submitAssignment('<%= a._id%>')" class="action-btn action-btn-submit">
+                Submit
+              </button>
+            <%}else if(a.status==='rejected'){%>
+            <a
+              href="/student/assignments/<%= a._id %>/resubmit"
+              class="action-btn action-btn-resubmit"
+              >Resubmit</a
+            >
+            <%}%>
+          </div>
+        </div>
+        <% }) %>
       </div>
-      <% } %> <% if (typeof success !== 'undefined' && success) { %>
-      <div
-        style="
-          background: #ecfdf5;
-          color: #065f46;
-          padding: 0.6rem;
-          border-radius: 8px;
-          margin-bottom: 1rem;
-        "
-      >
-        <%= success %>
+      <% } else { %>
+      <div class="empty-state">
+        <div class="empty-state-icon">📭</div>
+        <div class="empty-state-title">No Assignments</div>
+        <div class="empty-state-text">
+          You haven't uploaded any assignments yet
+        </div>
+        <a class="btn btn-primary" href="/student/assignments/upload"
+          >Upload Your First Assignment</a
+        >
       </div>
       <% } %>
-
-      <!-- Controls: Filter & Sort -->
-      <div class="controls">
-        <div class="filter-group">
-          <label for="statusFilter">Filter by Status:</label>
-          <select id="statusFilter">
-            <option value="">All Statuses</option>
-            <option value="draft">Draft</option>
-            <option value="submitted">Submitted</option>
-            <option value="approved">Approved</option>
-            <option value="rejected">Rejected</option>
-          </select>
-        </div>
-
-        <button class="sort-btn" onclick="toggleSort()">Sort by Date ⇅</button>
-      </div>
-
-      <!-- Table View -->
-      <div class="table-wrapper">
-        <% if (Array.isArray(assignments) && assignments.length) { %>
-        <table id="assignmentsTable">
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Category</th>
-              <th>Status</th>
-              <th>Creation Date</th>
-              <th>Current Reviewer</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="tableBody">
-            <% assignments.forEach(function(a){ %>
-            <tr
-              data-status="<%= (a.status || 'draft').toString().toLowerCase() %>"
-              data-date="<%= a.submittedAt ? new Date(a.submittedAt).getTime() : 0 %>"
-            >
-              <td><%= a.title %></td>
-              <td><%= a.category || '-' %></td>
-              <td>
-                <% var st = (a.status || 'draft').toString().toLowerCase(); %>
-                <span class="badge <%= st %>"
-                  ><%= st.charAt(0).toUpperCase() + st.slice(1) %></span
-                >
-              </td>
-              <td>
-                <%= a.submittedAt ? new Date(a.submittedAt).toLocaleDateString()
-                : 'Not submitted' %>
-              </td>
-              <td class="reviewer">
-                <%= a.faculty&& a.faculty.name ? a.faculty.name : 'Unassigned'
-                %>
-              </td>
-              <td>
-                <a class="title-link" href="/student/assignments/<%= a._id %>"
-                  >View</a
-                >
-                <%if(a.status==='rejected'){%>
-                <a
-                  style="text-decoration: none"
-                  class="btn-resubmit"
-                  href="/student/assignments/<%= a._id %>/resubmit"
-                  >Resubmit</a
-                >
-                <%}else if(a.status==='draft'){%>
-                <button
-                  class="btn-submit"
-                  onclick="submitAssignment('<%= a._id%>')"
-                >
-                  Submit for review
-                </button>
-                <%}%>
-              </td>
-            </tr>
-            <% }) %>
-          </tbody>
-        </table>
-        <% } else { %>
-        <div class="empty">
-          No assignments yet.
-          <a
-            href="/student/assignments/upload"
-            style="color: var(--primary); font-weight: 700"
-            >Upload your first one</a
-          >.
-        </div>
-        <% } %>
-      </div>
     </div>
-
     <script>
-      let sortAsc = false
-
-      // Filter by status
-      document
-        .getElementById('statusFilter')
-        .addEventListener('change', function (e) {
-          const filterVal = e.target.value.toLowerCase()
-
-          // Filter table rows
-          document.querySelectorAll('#tableBody tr').forEach((row) => {
-            if (!filterVal || row.dataset.status === filterVal) {
-              row.style.display = ''
-            } else {
-              row.style.display = 'none'
-            }
-          })
-
-          // Filter cards
-          document.querySelectorAll('.card-item').forEach((card) => {
-            if (!filterVal || card.dataset.status === filterVal) {
-              card.style.display = ''
-            } else {
-              card.style.display = 'none'
-            }
-          })
-        })
-
-      // Sort by date
-      function toggleSort() {
-        sortAsc = !sortAsc
-        const rows = Array.from(document.querySelectorAll('#tableBody tr'))
-        const cards = Array.from(document.querySelectorAll('.card-item'))
-
-        rows.sort((a, b) => {
-          const dateA = parseInt(a.dataset.date) || 0
-          const dateB = parseInt(b.dataset.date) || 0
-          return sortAsc ? dateA - dateB : dateB - dateA
-        })
-
-        cards.sort((a, b) => {
-          const dateA = parseInt(a.dataset.date) || 0
-          const dateB = parseInt(b.dataset.date) || 0
-          return sortAsc ? dateA - dateB : dateB - dateA
-        })
-
-        // Re-append rows
-        const tbody = document.getElementById('tableBody')
-        rows.forEach((row) => tbody.appendChild(row))
-
-        // Re-append cards
-        const cardsView = document.getElementById('cardsView')
-        cards.forEach((card) => cardsView.appendChild(card))
-      }
-
       async function submitAssignment(id) {
         const result = await Swal.fire({
           title: 'Submit Assignment?',

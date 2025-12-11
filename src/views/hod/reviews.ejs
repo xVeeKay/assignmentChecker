@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>My Reviews — Professor</title>
+    <style>
+      :root {
+        --bg: #f7f9fb;
+        --card: #fff;
+        --muted: #6b7280;
+        --accent: #2563eb;
+        --success: #16a34a;
+        --danger: #dc2626;
+      }
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        font-family: Inter, system-ui, Segoe UI, Roboto, 'Helvetica Neue', Arial;
+      }
+      body {
+        background: var(--bg);
+        color: #111;
+      }
+      .container {
+        max-width: 980px;
+        margin: 32px auto;
+        padding: 20px;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 18px;
+      }
+      h1 {
+        font-size: 20px;
+        margin: 0;
+      }
+      .controls {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+      .btn {
+        background: var(--accent);
+        color: #fff;
+        padding: 8px 12px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+      }
+      .btn.ghost {
+        background: transparent;
+        color: var(--accent);
+        border: 1px solid rgba(37, 99, 235, 0.12);
+      }
+      .panel {
+        background: var(--card);
+        border-radius: 12px;
+        padding: 16px;
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+      }
+      .filters {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+      .search {
+        padding: 8px 10px;
+        border-radius: 8px;
+        border: 1px solid #e6e9ee;
+        min-width: 220px;
+      }
+      .select {
+        padding: 8px;
+        border-radius: 8px;
+        border: 1px solid #e6e9ee;
+        background: #fff;
+      }
+      .list {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .card {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 14px;
+        border-radius: 10px;
+        border: 1px solid #eef2f6;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.6),
+          rgba(255, 255, 255, 0.2)
+        );
+      }
+      .meta {
+        display: flex;
+        flex-direction: column;
+      }
+      .title {
+        font-weight: 700;
+        font-size: 15px;
+        margin-bottom: 6px;
+      }
+      .sub {
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .badges {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .badge {
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 12px;
+        color: #fff;
+      }
+      .badge.approved {
+        background: var(--success);
+      }
+      .badge.rejected {
+        background: var(--danger);
+      }
+      .remarks {
+        margin-top: 8px;
+        font-size: 13px;
+        color: #374151;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .empty {
+        padding: 36px;
+        text-align: center;
+        color: var(--muted);
+      }
+      @media (min-width: 720px) {
+        .list {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div>
+          <h1>My Reviews</h1>
+          <div class="muted">All assignments you have approved or rejected</div>
+        </div>
+        <div class="controls">
+          <a
+            class="btn"
+            href="/hod/dashboard"
+            >Back to Dashboard</a
+          >
+        </div>
+      </header>
+
+      <section class="panel">
+
+        <% if (!assignments || assignments.length === 0) { %>
+        <div class="empty">
+          No reviews found. You'll see assignments here after you mark them
+          approved or rejected.
+        </div>
+        <% } else { %>
+        <div class="list" id="reviewsList">
+          <% assignments.forEach(function(a){ %>
+          <article
+            class="card"
+            data-title="<%= (a.title || '').toLowerCase() %>"
+            data-student="<%= (a.studentName || '').toLowerCase() %>"
+            data-status="<%= (a.status || '').toLowerCase() %>"
+          >
+            <div class="meta">
+              <div class="title"><%= a.title || 'Untitled Assignment' %></div>
+              <div class="sub">
+                Student: <strong><%= a.student.name || '—' %></strong>
+              </div>
+              <% if (a.remarks) { %>
+              <div class="remarks">
+                <strong>Remarks:</strong>
+                <span class="muted"><%= a.remarks %></span>
+              </div>
+              <% } %>
+            </div>
+            <div class="badges">
+              <% if ((a.status || '').toLowerCase() === 'approved') { %>
+              <div class="badge approved" aria-label="Approved">Approved</div>
+              <% } else { %>
+              <div class="badge rejected" aria-label="Rejected">Rejected</div>
+              <% } %>
+            </div>
+          </article>
+          <% }); %>
+        </div>
+        <% } %>
+      </section>
+    </div>
+  </body>
+</html>

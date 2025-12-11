@@ -151,44 +151,54 @@ const deleteDepartment = async (req, res) => {
 }
 
 const createUser = async (req, res) => {
-  const { name, email, password, phone, department, role } = req.body
-  const existingUser = await User.findOne({ email })
-  const departments = await Department.find()
-  if (existingUser) {
-    return res.status(400).render('admin/createUser', {
-      error: 'Email already exists!',
-      departments,
+  try {
+    const { name, email, password, phone, department, role } = req.body
+    const existingUser = await User.findOne({ email })
+    const departments = await Department.find()
+    if (existingUser) {
+      return res.status(400).render('admin/createUser', {
+        error: 'Email already exists!',
+        departments,
+      })
+    }
+    const plainPassword = password || crypto.randomBytes(4).toString('hex')
+    const hashedPassword = await bcrypt.hash(plainPassword, 10)
+    var avatar = 'https://avatar.iran.liara.run/public/19'
+    if (req.file && req.file.buffer) {
+      const result = await uploadToCloudinary(
+        req.file.buffer,
+        'assignmentChecker/userAvatars'
+      )
+      avatar = result.secure_url
+    }
+    const user = new User({
+      name,
+      email,
+      password:hashedPassword,
+      phone,
+      department,
+      role,
+      avatar,
     })
-  }
-  const plainPassword = password || crypto.randomBytes(4).toString('hex')
-  const hashedPassword = await bcrypt.hash(plainPassword, 10)
-  var avatar = 'https://avatar.iran.liara.run/public/19'
-  if (req.file && req.file.buffer) {
-    const result = await uploadToCloudinary(
-      req.file.buffer,
-      'assignmentChecker/userAvatars'
-    )
-    avatar = result.secure_url
-  }
-  const user = new User({
-    name,
-    email,
-    password:hashedPassword,
-    phone,
-    department,
-    role,
-    avatar,
-  })
-  await user.validate()
-  await user.save()
-  if (req.body.sendEmail) {
-    await sendWelcomeEmail(email, name, plainPassword)
-  }
+    await user.validate()
+    await user.save()
+    if (req.body.sendEmail) {
+      // await sendWelcomeEmail(email, name, plainPassword)
+      let ack = await sendWelcomeEmail(email,name,plainPassword)
+      if(!ack){
+        res.render('admin/createUser',{error:"Error while sending email to user",departments})
+      }
+    }
 
-  res.render('admin/createUser', {
-    departments,
-    success: 'User created successfully! 🎊',
-  })
+    res.render('admin/createUser', {
+      departments,
+      success: 'User created successfully! 🎊',
+    })
+  } catch (error) {
+    console.log("Error while creating user!", error)
+    const departments = await Department.find()
+    res.render('admin/createUser',{error:"Error while creating user",departments})
+  }
 }
 
 const viewUsers = async (req, res) => {

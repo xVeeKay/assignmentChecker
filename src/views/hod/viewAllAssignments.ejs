@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pending Submissions</title>
+    <style>
+      :root {
+        --primary: #064e3b;
+        --bg: #f8faf9;
+        --card: #ffffff;
+        --border: #e5e7eb;
+        --muted: #6b7280;
+        --status-bg: #ecfdf5;
+        --status-color: #065f46;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          'Helvetica Neue', Arial, sans-serif;
+        background: var(--bg);
+        color: #1f2937;
+        padding: 24px;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 28px;
+      }
+
+      .header h1 {
+        font-size: 28px;
+        font-weight: 700;
+        color: #111827;
+      }
+
+      .view-all-link {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .view-all-link:hover {
+        text-decoration: underline;
+      }
+
+      .panel {
+        background: var(--card);
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        border: 1px solid var(--border);
+        overflow: hidden;
+      }
+
+      .table-wrapper {
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      thead {
+        background: #f3f4f6;
+        border-bottom: 1px solid var(--border);
+      }
+
+      th {
+        padding: 14px 18px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 13px;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      td {
+        padding: 14px 18px;
+        border-bottom: 1px solid var(--border);
+        font-size: 14px;
+      }
+
+      tbody tr:hover {
+        background: #f9fafb;
+      }
+
+      tbody tr:last-child td {
+        border-bottom: none;
+      }
+
+      .assignment-col {
+        font-weight: 500;
+        color: #111827;
+      }
+
+      .course-col {
+        background: #f0f4ff;
+        color: #3b82f6;
+        font-weight: 600;
+        padding: 4px 8px;
+        border-radius: 4px;
+        display: inline-block;
+        font-size: 12px;
+      }
+
+      .student-col {
+        color: #374151;
+      }
+
+      .submitted-col {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .status-submitted {
+        background: var(--status-bg);
+        color: var(--status-color);
+      }
+
+      .status-pending {
+        background: #fef3c7;
+        color: #92400e;
+      }
+
+      .status-rejected {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+
+      .status-approved {
+        background: #dbeafe;
+        color: #1e40af;
+      }
+      .status-forwarded {
+        background: #f3e8ff; /* light violet */
+        color: #6b21a8; /* dark purple */
+      }
+
+      .actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      .btn {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 6px;
+        border: none;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+
+      .btn-review {
+        background: var(--primary);
+        color: white;
+      }
+
+      .btn-review:hover {
+        background: #064e3b;
+        opacity: 0.9;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(6, 78, 59, 0.2);
+      }
+
+      .btn-details {
+        background: #e5e7eb;
+        color: #374151;
+      }
+
+      .btn-details:hover {
+        background: #d1d5db;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--muted);
+      }
+
+      .empty-state-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+      }
+
+      .empty-state h3 {
+        font-size: 18px;
+        margin-bottom: 8px;
+        color: #374151;
+      }
+
+      .error {
+        background: #fee2e2;
+        color: #991b1b;
+        padding: 12px 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border-left: 4px solid #ef4444;
+        font-size: 14px;
+      }
+
+      .success {
+        background: #dcfce7;
+        color: #166534;
+        padding: 12px 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border-left: 4px solid #22c55e;
+        font-size: 14px;
+      }
+
+      .filters {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+
+      .filter-btn {
+        padding: 8px 14px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: white;
+        color: #374151;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+      }
+
+      .filter-btn:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+
+      .filter-btn.active {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+      }
+
+      @media (max-width: 768px) {
+        body {
+          padding: 16px;
+        }
+
+        .header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 16px;
+        }
+
+        th,
+        td {
+          padding: 10px 12px;
+          font-size: 13px;
+        }
+
+        .btn {
+          padding: 6px 12px;
+          font-size: 12px;
+        }
+
+        .actions {
+          flex-direction: column;
+        }
+
+        table {
+          font-size: 13px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <% if (typeof error !== 'undefined' && error) { %>
+      <div class="error"><%= error %></div>
+      <% } %> <% if (typeof success !== 'undefined' && success) { %>
+      <div class="success"><%= success %></div>
+      <% } %>
+
+      <div class="header">
+        <h1>Pending Submissions</h1>
+        <a href="/hod/dashboard" class="view-all-link"
+          >← Back to Dashboard</a
+        >
+      </div>
+
+      <div class="panel">
+        <% if (Array.isArray(assignments) && assignments.length > 0) { %>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 28%">Assignment</th>
+                <th style="width: 22%">Student</th>
+                <th style="width: 18%">Submitted</th>
+                <th style="width: 14%">Status</th>
+                <th style="width: 18%">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% assignments.forEach(function(assignment) { %>
+              <tr>
+                <td class="assignment-col"><%= assignment.title %></td>
+                <td class="student-col"><%= assignment.student.name %></td>
+                <td class="submitted-col">
+                  <%= assignment.submittedAt.toLocaleDateString("en-IN") %>
+                </td>
+                <td>
+                  <% var status = (assignment.status ||
+                  'submitted').toLowerCase(); var statusClass = 'status-' +
+                  status; %>
+                  <span class="status-badge <%= statusClass %>">
+                    <%= status.charAt(0).toUpperCase() + status.slice(1) %>
+                  </span>
+                </td>
+                <td>
+                  <div class="actions">
+                    <a
+                      href="/hod/review/<%= assignment._id %>"
+                      class="btn btn-review"
+                      >Review</a
+                    >
+                  </div>
+                </td>
+              </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+        <% } else { %>
+        <div class="empty-state">
+          <div class="empty-state-icon">📋</div>
+          <h3>No pending submissions</h3>
+          <p>
+            All assignments have been reviewed or are waiting for submission.
+          </p>
+        </div>
+        <% } %>
+      </div>
+    </div>
+  </body>
+</html>

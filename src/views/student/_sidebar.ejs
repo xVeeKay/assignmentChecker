@@ -1,0 +1,376 @@
+<!-- Sidebar Navigation -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <h1>AC</h1>
+    <span class="sidebar-title">AssignmentChecker</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <ul>
+      <li>
+        <a
+          href="/student/dashboard"
+          class="nav-link <%= currentPage === 'dashboard' ? 'active' : '' %>"
+        >
+          <span class="nav-label">Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <a
+          href="/student/assignments"
+          class="nav-link <%= currentPage === 'assignments' ? 'active' : '' %>"
+        >
+          <span class="nav-label">Assignments</span>
+        </a>
+      </li>
+      <li>
+        <a
+          href="/student/assignments/upload"
+          class="nav-link <%= currentPage === 'upload' ? 'active' : '' %>"
+        >
+          <span class="nav-label">Upload</span>
+        </a>
+      </li>
+      <li>
+        <a
+          href="/student/profile"
+          class="nav-link <%= currentPage === 'profile' ? 'active' : '' %>"
+        >
+          <span class="nav-label">Profile</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="sidebar-footer">
+    <form action="/student/logout" method="POST" style="width: 100%">
+      <button class="btn-logout" type="submit">Logout</button>
+    </form>
+  </div>
+</aside>
+
+<style>
+  :root {
+    --radius: 0.65rem;
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.141 0.005 285.823);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.141 0.005 285.823);
+    --primary: oklch(0.541 0.281 293.009);
+    --primary-foreground: oklch(0.969 0.016 293.756);
+    --secondary: oklch(0.967 0.001 286.375);
+    --secondary-foreground: oklch(0.21 0.006 285.885);
+    --muted: oklch(0.967 0.001 286.375);
+    --muted-foreground: oklch(0.552 0.016 285.938);
+    --accent: oklch(0.967 0.001 286.375);
+    --accent-foreground: oklch(0.21 0.006 285.885);
+    --destructive: oklch(0.577 0.245 27.325);
+    --border: oklch(0.92 0.004 286.32);
+    --input: oklch(0.92 0.004 286.32);
+    --sidebar: oklch(0.985 0 0);
+    --sidebar-foreground: oklch(0.141 0.005 285.823);
+    --sidebar-primary: oklch(0.541 0.281 293.009);
+    --sidebar-primary-foreground: oklch(0.969 0.016 293.756);
+    --sidebar-border: oklch(0.92 0.004 286.32);
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    display: flex;
+    flex-direction: row;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+      Ubuntu, Cantarell, sans-serif;
+    background: var(--background);
+    color: var(--foreground);
+  }
+
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 260px;
+    height: 100vh;
+    background: var(--sidebar);
+    color: var(--sidebar-foreground);
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--sidebar-border);
+    z-index: 100;
+    overflow-y: auto;
+  }
+
+  body > *:not(.sidebar) {
+    margin-left: 260px;
+    flex: 1;
+    width: calc(100% - 260px);
+  }
+
+  .sidebar-header {
+    padding: 28px 20px;
+    border-bottom: 1px solid var(--sidebar-border);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .sidebar-header h1 {
+    font-size: 20px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--sidebar-primary), var(--primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0;
+  }
+
+  .sidebar-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted-foreground);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .sidebar-nav {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 0;
+  }
+
+  .sidebar-nav ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .sidebar-nav li {
+    margin: 0;
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    color: var(--sidebar-foreground);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+    font-weight: 500;
+    font-size: 14px;
+    position: relative;
+  }
+
+  .nav-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--muted-foreground);
+    transition: all 0.2s ease;
+  }
+
+  .nav-link:hover {
+    background: rgba(84, 28, 145, 0.08);
+    color: var(--sidebar-primary);
+    border-left-color: var(--sidebar-primary);
+  }
+
+  .nav-link:hover .nav-dot {
+    background: var(--sidebar-primary);
+  }
+
+  .nav-link.active {
+    background: rgba(84, 28, 145, 0.12);
+    color: var(--sidebar-primary);
+    border-left-color: var(--sidebar-primary);
+    font-weight: 600;
+  }
+
+  .nav-link.active .nav-dot {
+    background: var(--sidebar-primary);
+  }
+
+  .nav-label {
+    font-size: 14px;
+  }
+
+  .sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--sidebar-border);
+    flex-shrink: 0;
+  }
+
+  .btn-logout {
+    width: 100%;
+    padding: 10px 16px;
+    background: var(--destructive);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-logout:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+
+  /* Scrollbar styling */
+  .sidebar-nav::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .sidebar-nav::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .sidebar-nav::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 3px;
+  }
+
+  .sidebar-nav::-webkit-scrollbar-thumb:hover {
+    background: var(--muted-foreground);
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .sidebar {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .sidebar {
+      width: 100%;
+      height: auto;
+      position: relative;
+      flex-direction: row;
+      border-right: none;
+      border-bottom: 1px solid var(--sidebar-border);
+      padding: 0;
+    }
+
+    body {
+      flex-direction: column;
+    }
+
+    body > *:not(.sidebar) {
+      margin-left: 0;
+      width: 100%;
+    }
+
+    .sidebar-header {
+      flex: 0 0 auto;
+      padding: 16px 20px;
+      border-right: 1px solid var(--sidebar-border);
+      border-bottom: none;
+    }
+
+    .sidebar-title {
+      display: none;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      display: flex;
+      padding: 0;
+      overflow: visible;
+    }
+
+    .sidebar-nav ul {
+      flex-direction: row;
+      width: 100%;
+      gap: 0;
+    }
+
+    .sidebar-nav li {
+      flex: 1;
+    }
+
+    .nav-link {
+      border-left: none;
+      border-bottom: 3px solid transparent;
+      padding: 12px 16px;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    .nav-dot {
+      display: none;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      border-left: none;
+      border-bottom-color: var(--sidebar-primary);
+    }
+
+    .sidebar-footer {
+      border-left: 1px solid var(--sidebar-border);
+      border-top: none;
+      padding: 12px 16px;
+      flex: 0 0 auto;
+    }
+
+    .btn-logout {
+      padding: 8px 12px;
+      font-size: 12px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .sidebar-header {
+      padding: 12px 16px;
+    }
+
+    .sidebar-logo {
+      font-size: 18px;
+    }
+
+    .sidebar-nav li {
+      flex: 1 1 auto;
+      min-width: 50px;
+    }
+
+    .nav-link {
+      padding: 10px 12px;
+      gap: 4px;
+      font-size: 10px;
+    }
+
+    .nav-icon {
+      width: 16px;
+      height: 16px;
+      font-size: 14px;
+    }
+
+    .sidebar-footer {
+      padding: 10px 12px;
+    }
+
+    .btn-logout {
+      padding: 6px 10px;
+      font-size: 11px;
+    }
+  }
+</style>

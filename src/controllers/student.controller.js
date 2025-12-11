@@ -8,18 +8,27 @@ const { uploadToCloudinary } = require('../utils/student/cloudinary.js')
 const https = require('https')
 
 const dashboard = async (req, res) => {
-    const user=await User.findOne({email:req.user.email})
-    if(!user){
-        return res.redirect('/')
-    }
-  const draftCount = await Assignment.countDocuments({ status: 'draft',student:user._id })
+  const user = await User.findOne({ email: req.user.email })
+  if (!user) {
+    return res.redirect('/')
+  }
+  const draftCount = await Assignment.countDocuments({
+    status: 'draft',
+    student: user._id,
+  })
   const submittedCount = await Assignment.countDocuments({
     status: 'submitted',
-    student:user._id
+    student: user._id,
   })
-  const approvedCount = await Assignment.countDocuments({ status: 'approved',student:user._id })
-  const rejectedCount = await Assignment.countDocuments({ status: 'rejected',student:user._id })
-  const recentSubmissions = await Assignment.find({student:user._id})
+  const approvedCount = await Assignment.countDocuments({
+    status: 'approved',
+    student: user._id,
+  })
+  const rejectedCount = await Assignment.countDocuments({
+    status: 'rejected',
+    student: user._id,
+  })
+  const recentSubmissions = await Assignment.find({ student: user._id })
     .sort({ createdAt: -1 })
     .limit(5)
   res.render('student/dashboard', {
@@ -28,7 +37,8 @@ const dashboard = async (req, res) => {
     approvedCount,
     rejectedCount,
     recentSubmissions,
-    user
+    user,
+    currentPage: 'dashboard',
   })
 }
 
@@ -37,7 +47,7 @@ const createAssignment = async (req, res) => {
     const { title, description, category, faculty } = req.body
     const student = await User.findOne({ email: req.user.email })
     if (!student) {
-        return res.status(404).send('Student not found');
+      return res.status(404).send('Student not found')
     }
     if (!req.files || req.files.length === 0) {
       return res.render('student/uploadAssignment', {
@@ -66,23 +76,34 @@ const createAssignment = async (req, res) => {
   } catch (error) {
     console.log(error)
     const student = await User.findOne({ email: req.user.email })
-    const faculties=await User.find({department:student.department,role:'professor'})
+    const faculties = await User.find({
+      department: student.department,
+      role: 'professor',
+    })
     res.render('student/uploadAssignment', {
-      error: 'Error while uploading assignment! May be checks if info is correct and valid',
-      faculty:faculties
+      error:
+        'Error while uploading assignment! May be checks if info is correct and valid',
+      faculty: faculties,
     })
   }
 }
 
 const viewAssignments = async (req, res) => {
-    const user=await User.findOne({email:req.user.email})
+  const user = await User.findOne({ email: req.user.email })
   try {
-    const assignments = await Assignment.find({student:user._id}).populate('faculty', 'name')
-    res.render('student/assignments', { assignments })
+    const assignments = await Assignment.find({ student: user._id }).populate(
+      'faculty',
+      'name'
+    )
+    res.render('student/assignments', {
+      assignments,
+      currentPage: 'assignments',
+    })
   } catch (error) {
     console.log(error)
     res.render('student/assignments', {
       error: 'Error while fetching assignments!',
+      currentPage: 'assignments',
     })
   }
 }
@@ -233,42 +254,73 @@ const resubmitAssignment = async (req, res) => {
     })
     res.redirect(`/student/assignments/${id}`)
   } catch (error) {
+    const id = req.params.id
     console.log(error)
     res.redirect(`/student/assignments/${id}`)
   }
 }
 
-const logout=async(req,res)=>{
-    try {
-        res.clearCookie('token')
-        res.redirect('/')
-    } catch (error) {
-        console.log("Error while logging out ",error)
-        res.redirect('/student/dashboard')
-    }
+const logout = async (req, res) => {
+  try {
+    res.clearCookie('token')
+    res.redirect('/')
+  } catch (error) {
+    console.log('Error while logging out ', error)
+    res.redirect('/student/dashboard')
+  }
 }
 
-const changePassword=async(req,res)=>{
-    try {
-        const {oldPassword,newPassword,confirmPassword}=req.body
-        const user=await User.findOne({email:req.user.email}).populate('department')
-        const submittedCount=await Assignment.countDocuments({student:user._id,status:'submitted'})
-        const ok=await bcrypt.compare(oldPassword,user.password)
-        if(!ok){
-            return res.render('student/profile',{error:"Incorrect password!",user,submittedCount})
-        }
-        if(newPassword!==confirmPassword){
-            return res.render('student/profile',{error:"New password does not match with confirm password!",user,submittedCount})
-        }
-        user.password=await bcrypt.hash(newPassword,10)
-        await user.save()
-        res.render('student/profile',{success:"Password changed successfully!",user,submittedCount})
-    } catch (error) {
-        console.log("Error while changing the password ,",error)
-        const user=await User.findOne({email:req.user.email}).populate('department')
-        const submittedCount=await Assignment.countDocuments({student:user._id,status:'submitted'})
-        return res.render('student/profile',{error:"Error while changing the password",user,submittedCount})
+const changePassword = async (req, res) => {
+  try {
+    const { oldPassword, newPassword, confirmPassword } = req.body
+    const user = await User.findOne({ email: req.user.email }).populate(
+      'department'
+    )
+    const submittedCount = await Assignment.countDocuments({
+      student: user._id,
+      status: 'submitted',
+    })
+    const ok = await bcrypt.compare(oldPassword, user.password)
+    if (!ok) {
+      return res.render('student/profile', {
+        error: 'Incorrect password!',
+        user,
+        submittedCount,
+        currentPage:'profile'
+      })
     }
+    if (newPassword !== confirmPassword) {
+      return res.render('student/profile', {
+        error: 'New password does not match with confirm password!',
+        user,
+        submittedCount,
+        currentPage:'profile'
+      })
+    }
+    user.password = await bcrypt.hash(newPassword, 10)
+    await user.save()
+    res.render('student/profile', {
+      success: 'Password changed successfully!',
+      user,
+      submittedCount,
+      currentPage:'profile'
+    })
+  } catch (error) {
+    console.log('Error while changing the password ,', error)
+    const user = await User.findOne({ email: req.user.email }).populate(
+      'department'
+    )
+    const submittedCount = await Assignment.countDocuments({
+      student: user._id,
+      status: 'submitted',
+    })
+    return res.render('student/profile', {
+      error: 'Error while changing the password',
+      user,
+      submittedCount,
+      currentPage:'profile'
+    })
+  }
 }
 
 module.exports = {

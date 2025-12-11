@@ -7,6 +7,7 @@ const {login}=require('./controllers/admin.controller.js')
 const path=require('path')
 const authRoutes=require('./routes/auth.route.js')
 const professorRoutes=require('./routes/professor.route.js')
+const hodRoutes=require('./routes/hod.route.js')
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -44,7 +45,7 @@ app.use('/auth',authRoutes)
 app.use('/admin',adminRoutes)
 app.use('/student',studentRoutes)
 app.use('/professor',professorRoutes)
-
+app.use('/hod',hodRoutes)
 
 
 
